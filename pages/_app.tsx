@@ -10,12 +10,15 @@ import thunk from 'redux-thunk'
 import { useStore } from '../store'
 import reducer from 'reducer'
 import { Provider } from 'react-redux'
+import initFirebase from 'services/initFirebase'
 
 const store = createStore(reducer, applyMiddleware(thunk))
 
 export default function App({ Component, pageProps }: AppProps) {
   const store = useStore(pageProps.initialReduxState)
   useEffect(() => {
+    initFirebase()
+
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side')
     if (jssStyles) {

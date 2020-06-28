@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Typography, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import AppBar from 'components/AppBar'
+import firebase from 'firebase/app'
+import useSetState from 'hooks/useSetState'
+import 'firebase/auth'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -10,51 +13,91 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: `${theme.palette.primary.main}80`,
   },
   box: {
-    boxShadow: theme.shadows[4],
-    // backgroundColor: theme.palette.grey[100],
+    boxShadow: theme.shadows[22],
     zIndex: 100,
     backgroundColor: theme.palette.background.default,
     height: 440,
-    // paddingLeft: 100,
-    // paddingRight: 100,
     padding: '30px 80px',
     borderRadius: 8,
     ...theme.flex.center,
     flexDirection: 'column',
     justifyContent: 'space-evenly',
     '& input': {
-      // backgroundColor: theme.palette.background.default,
       minWidth: 300,
     },
 
-    // '& div': {
-    //   minWidth: 300,
-    //   marginBottom: 15,
-
-    // },
+    '& img': {
+      width: 100,
+      marginBottom: 20,
+    },
   },
 }))
 
 const Signin = () => {
   const classes = useStyles()
+  const [email, setEmail] = useState('')
+  const [error, setError] = useState({
+    email: null,
+    password: null,
+  })
+  const [password, setPassword] = useState('')
+
+  const signOut = () => {
+    // TODO: remove this
+    firebase.auth().signOut()
+  }
+
+  const handleSignin = () => {
+    console.log(email, password)
+
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(result => {
+        console.log('SIGNED IN:', result)
+        // redirect
+      })
+      .catch(error => {
+        console.log(error.code)
+        if (error.code === 'auth/wrong-password')
+          return setError({ password: 'Senha inválida' })
+        if (error.code === 'auth/user-not-found')
+          return setError({ email: 'Usuário não encontrado' })
+        if (error.code === 'auth/invalid-email')
+          return setError({ email: 'Email inválido' })
+
+        console.error(error.code, error.message)
+      })
+  }
+
   return (
     <section className={classes.root}>
       {/* <AppBar title="Autenticação" /> */}
 
       <div className={classes.box}>
-        <Typography variant="h5" component="h1" color="primary">
-          Autenticação
-        </Typography>
+        <img src="/logo192.png" alt="Menu logo" onClick={signOut} />
 
-        <TextField id="email" label="Email" variant="outlined" />
         <TextField
+          type="email"
+          onChange={e => setEmail(e.target.value)}
+          id="email"
+          label="Email"
+          variant="outlined"
+          error={!!error.email}
+          helperText={error.email}
+        />
+
+        <TextField
+          type="password"
+          onChange={e => setPassword(e.target.value)}
           id="password"
           label="Senha"
-          // helperText="Incorrect entry."
+          error={!!error.password}
+          helperText={error.password}
           variant="outlined"
         />
 
-        <Button fullWidth variant="contained">
+        <Button fullWidth variant="contained" onClick={handleSignin}>
           Entrar
         </Button>
       </div>
