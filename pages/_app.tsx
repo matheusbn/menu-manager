@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import '../index.css'
@@ -11,13 +11,28 @@ import { useStore } from '../store'
 import reducer from 'reducer'
 import { Provider } from 'react-redux'
 import initFirebase from 'services/initFirebase'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import { setUser } from 'actions'
+import SplashScreen from 'components/SplashScreen'
 
 const store = createStore(reducer, applyMiddleware(thunk))
 
 export default function App({ Component, pageProps }: AppProps) {
+  // there are 2 loading variables to control the splashscreen transition
+  const [loaded, setLoaded] = useState(false)
+  const [loading, setLoading] = useState(true)
   const store = useStore(pageProps.initialReduxState)
+  const { dispatch } = store
+
   useEffect(() => {
     initFirebase()
+    firebase.auth().onAuthStateChanged(user => {
+      setLoading(false)
+      setTimeout(() => setLoaded(true), 300)
+
+      dispatch(setUser(user))
+    })
 
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side')
@@ -39,7 +54,12 @@ export default function App({ Component, pageProps }: AppProps) {
         <ThemeProvider theme={theme}>
           <CssBaseline />
 
-          <Component {...pageProps} />
+          {/* {true ? <SplashScreen /> : <Component {...pageProps} />} */}
+          {loaded ? (
+            <Component {...pageProps} />
+          ) : (
+            <SplashScreen loading={loading} />
+          )}
         </ThemeProvider>
       </Provider>
     </>

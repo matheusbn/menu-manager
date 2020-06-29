@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Typography, TextField } from '@material-ui/core'
+import Router from 'next/router'
+import { Button, CircularProgress, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import AppBar from 'components/AppBar'
 import firebase from 'firebase/app'
-import useSetState from 'hooks/useSetState'
 import 'firebase/auth'
 
 const useStyles = makeStyles(theme => ({
   root: {
     height: '100vh',
     ...theme.flex.center,
-    backgroundColor: `${theme.palette.primary.main}80`,
+    backgroundColor: `${theme.palette.primary.main}30`,
   },
   box: {
     boxShadow: theme.shadows[22],
@@ -35,6 +35,7 @@ const useStyles = makeStyles(theme => ({
 
 const Signin = () => {
   const classes = useStyles()
+  const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [error, setError] = useState({
     email: null,
@@ -48,15 +49,12 @@ const Signin = () => {
   }
 
   const handleSignin = () => {
-    console.log(email, password)
+    setLoading(true)
 
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(result => {
-        console.log('SIGNED IN:', result)
-        // redirect
-      })
+      .then(result => Router.push('/'))
       .catch(error => {
         console.log(error.code)
         if (error.code === 'auth/wrong-password')
@@ -68,12 +66,11 @@ const Signin = () => {
 
         console.error(error.code, error.message)
       })
+      .finally(() => setLoading(false))
   }
 
   return (
     <section className={classes.root}>
-      {/* <AppBar title="Autenticação" /> */}
-
       <div className={classes.box}>
         <img src="/logo192.png" alt="Menu logo" onClick={signOut} />
 
@@ -97,7 +94,12 @@ const Signin = () => {
           variant="outlined"
         />
 
-        <Button fullWidth variant="contained" onClick={handleSignin}>
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={handleSignin}
+          endIcon={loading && <CircularProgress color="inherit" size={20} />}
+        >
           Entrar
         </Button>
       </div>
