@@ -3,13 +3,15 @@ import { Button, Typography, IconButton } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import MenuIcon from '@material-ui/icons/Menu'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
+import firebase from 'firebase/app'
+import 'firebase/auth'
 
-const BAR_HEIGHT = 70
+const BAR_HEIGHT = 60
 
 const useStyles = makeStyles(theme => ({
   root: {
     background: theme.palette.primary.main,
-    transition: 'background 0.3s',
+    padding: '0 15px',
     zIndex: 90,
     position: 'fixed',
     top: 0,
@@ -25,40 +27,48 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     color: 'white',
   },
-  icon: {
+  button: {
     color: 'white',
-    transition: 'color 0.3s',
   },
 }))
 
 export default function NavBar({
   title,
-  backButton,
   hamburguer,
 }: {
   style?: object
   className?: string
 
   title: string
-  backButton: boolean
   hamburguer: boolean
 }) {
   const classes = useStyles()
+
+  const signOut = () => {
+    // TODO: remove this
+    firebase.auth().signOut()
+  }
 
   return (
     <>
       <header className={classes.root}>
         <div></div>
 
-        <Typography variant="h6" component="h1" className={classes.title}>
+        <Typography
+          variant="subtitle1"
+          component="h1"
+          className={classes.title}
+        >
           {title}
         </Typography>
 
-        {hamburguer ? (
-          <IconButton aria-label="menu">
-            <MenuIcon className={classes.icon} />
-          </IconButton>
-        ) : null}
+        <Button
+          className={classes.button}
+          aria-label="logout"
+          onClick={signOut}
+        >
+          Sair
+        </Button>
       </header>
 
       {/* prevents elements from disappearing behind the appbar */}
