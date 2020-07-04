@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux'
+import Restaurant from 'models/Restaurant'
 
 const user = (state = null, action) => {
   switch (action.type) {
@@ -9,6 +10,26 @@ const user = (state = null, action) => {
   }
 }
 
+const restaurant = (state: Restaurant = null, action) => {
+  switch (action.type) {
+    case `SET_RESTAURANT`:
+      return action.restaurant
+    default:
+      return state
+  }
+}
+
+const menuItems = (state: Item[] = [], action) => {
+  switch (action.type) {
+    case `SET_MENU_ITEMS`:
+      return action.menuItems
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
   user,
+  restaurant,
+  menuItems,
 })

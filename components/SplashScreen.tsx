@@ -4,6 +4,9 @@ import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
   root: {
+    position: 'fixed',
+    width: '100%',
+    zIndex: 2000,
     height: '100vh',
     backgroundColor: `${theme.palette.primary.main}20`,
     ...theme.flex.center,
@@ -26,7 +29,7 @@ const SplashScreen = ({ loading }) => {
   const classes = useStyles()
 
   return (
-    <Fade in={loading} timeout={300} appear={false}>
+    <Fade in={loading} timeout={300} appear={false} unmountOnExit>
       <div className={classes.root}>
         <div>
           <img src="/logo192.png" alt="Menu logo" />

@@ -18,6 +18,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import FastfoodIcon from '@material-ui/icons/Fastfood'
 import TrendingUpIcon from '@material-ui/icons/TrendingUp'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 
@@ -44,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     // justifyContent: 'start',
     // paddingLeft: theme.spacing(1),
     '& img': {
-      height: 50,
+      height: 45,
     },
   },
   drawerPaper: {
@@ -60,53 +61,59 @@ const useStyles = makeStyles(theme => ({
       display: 'none',
     },
   },
+  drawerRoot: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
 }))
 
-export default function NavBar({
-  title,
-}: {
-  style?: object
-  className?: string
-
-  title: string
-  hamburguer: boolean
-}) {
+const NavBar = () => {
   const classes = useStyles()
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const handleDrawerToggle = () => setMobileOpen(prev => !prev)
 
-  const signOut = () => {
-    // TODO: remove this
-    firebase.auth().signOut()
-  }
+  const signOut = () => firebase.auth().signOut()
 
   const drawer = (
-    <div>
-      <div className={classes.toolbar}>
-        <img src="/logo192.png" alt="Menu logo" />
+    <div className={classes.drawerRoot}>
+      <div>
+        <div className={classes.toolbar}>
+          <img src="/logo192.png" alt="Menu logo" />
+        </div>
+
+        <Divider />
+
+        <List>
+          <ListItem button>
+            <ListItemIcon>
+              <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Informações" />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>
+              <FastfoodIcon />
+            </ListItemIcon>
+            <ListItemText primary="Cardápio" />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>
+              <TrendingUpIcon />
+            </ListItemIcon>
+            <ListItemText primary="Estatísticas" />
+          </ListItem>
+        </List>
       </div>
 
-      <Divider />
-
       <List>
-        <ListItem button>
+        <ListItem button onClick={signOut}>
           <ListItemIcon>
-            <AssignmentIcon />
+            <ExitToAppIcon />
           </ListItemIcon>
-          <ListItemText primary="Informações" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <FastfoodIcon />
-          </ListItemIcon>
-          <ListItemText primary="Cardápio" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <TrendingUpIcon />
-          </ListItemIcon>
-          <ListItemText primary="Estatísticas" />
+          <ListItemText primary="Sair" />
         </ListItem>
       </List>
     </div>
@@ -130,7 +137,6 @@ export default function NavBar({
           </Typography>
         </Toolbar>
       </AppBar>
-      <Toolbar />
 
       <nav className={classes.drawer} aria-label="navigation menu options">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
@@ -151,6 +157,7 @@ export default function NavBar({
           </Drawer>
         </Hidden>
         <Hidden smDown implementation="css">
+          <div style={{ width: drawerWidth }}></div>
           <Drawer
             classes={{
               paper: classes.drawerPaper,
@@ -165,3 +172,6 @@ export default function NavBar({
     </>
   )
 }
+NavBar.DRAWER_WIDTH = drawerWidth
+
+export default NavBar

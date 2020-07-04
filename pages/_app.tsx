@@ -13,7 +13,7 @@ import { Provider } from 'react-redux'
 import initFirebase from 'services/initFirebase'
 import firebase from 'firebase/app'
 import 'firebase/auth'
-import { setUser } from 'actions'
+import { setUser, fetchInitialData } from 'actions'
 import SplashScreen from 'components/SplashScreen'
 
 const store = createStore(reducer, applyMiddleware(thunk))
@@ -32,6 +32,9 @@ export default function App({ Component, pageProps }: AppProps) {
       setTimeout(() => setLoaded(true), 300)
 
       dispatch(setUser(user))
+      if (user) {
+        dispatch(fetchInitialData(user))
+      }
     })
 
     // Remove the server-side injected CSS.
@@ -53,13 +56,9 @@ export default function App({ Component, pageProps }: AppProps) {
       <Provider store={store}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
+          <SplashScreen loading={loading} />
 
-          {/* {true ? <SplashScreen /> : <Component {...pageProps} />} */}
-          {loaded ? (
-            <Component {...pageProps} />
-          ) : (
-            <SplashScreen loading={loading} />
-          )}
+          {loading ? null : <Component {...pageProps} />}
         </ThemeProvider>
       </Provider>
     </>

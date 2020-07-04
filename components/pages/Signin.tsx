@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Router from 'next/router'
 import { Button, CircularProgress, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import AppBar from 'components/AppBar'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 

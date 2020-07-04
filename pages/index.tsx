@@ -1,6 +1,6 @@
 import React from 'react'
-import Home from './home'
-import Signin from './signin'
+import Home from 'components/pages/Home'
+import Signin from 'components/pages/Signin'
 import { useSelector } from 'react-redux'
 
 const Index = () => {
