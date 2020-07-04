@@ -6,6 +6,8 @@ export * from './menuItems'
 export const fetchInitialData = user => async dispatch => {
   const restaurant = await Restaurant.fromUser(user.uid)
 
+  restaurant.getMenuItems()
+
   dispatch({
     type: 'SET_RESTAURANT',
     restaurant,

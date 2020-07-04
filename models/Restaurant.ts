@@ -11,35 +11,15 @@ const proxyHandler = {
 
 class Restaurant {
   snapshot
+  data
 
   constructor(snapshot) {
     this.snapshot = snapshot
+    this.data = this.snapshot.data()
   }
 
-  get name(): string {
-    return this.snapshot.data().name
-  }
-
-  get foodType(): string {
-    return this.snapshot.data().foodType
-  }
-
-  get address(): object {
-    console.log(this.snapshot.data().address)
-    return this.snapshot.data().address
-  }
-
-  get coverPicture(): string {
-    return this.snapshot.data().coverPicture
-  }
-
-  get maxCapacity(): number {
-    return this.snapshot.data().maxCapacity
-  }
-
-  get tableCodes(): string[] {
-    console.log(this.snapshot.data())
-    return this.snapshot.data().tableCodes
+  async update(...args) {
+    return this.snapshot.ref.update(...args)
   }
 
   async getMenuItems() {

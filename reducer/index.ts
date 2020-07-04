@@ -10,10 +10,15 @@ const user = (state = null, action) => {
   }
 }
 
-const restaurant = (state: Restaurant = null, action) => {
+const restaurant = (state: object | null = null, action) => {
   switch (action.type) {
     case `SET_RESTAURANT`:
       return action.restaurant
+    case `UPDATE_RESTAURANT`:
+      return {
+        ...state,
+        ...action.restaurant,
+      }
     default:
       return state
   }

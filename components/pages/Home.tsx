@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import Router from 'next/router'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateRestaurant } from 'actions'
 import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   Box,
   CircularProgress,
   Button,
@@ -12,12 +18,11 @@ import {
   TextField,
 } from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
-import LockIcon from '@material-ui/icons/Lock'
-import LockOpenIcon from '@material-ui/icons/LockOpen'
 import { makeStyles } from '@material-ui/core/styles'
-import Restaurant from 'models/Restaurant'
+import useSetState from 'hooks/useSetState'
 import NavLayout from 'components/NavLayout'
-import firebase from 'firebase/app'
+import isEmpty from 'lodash/isEmpty'
+import isEqual from 'lodash/isEqual'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -78,10 +83,45 @@ const useStyles = makeStyles(theme => ({
 
 const Home = () => {
   const [editing, setEditing] = useState(false)
+  const [warningOpen, setWarningOpen] = useState(false)
+  const dispatch = useDispatch()
   const classes = useStyles({ editing })
   const restaurant = useSelector(state => state.restaurant)
+  const [restaurantData, setRestaurantData] = useSetState([])
+
+  useEffect(() => {
+    if (restaurant) setRestaurantData(restaurant.data)
+  }, [restaurant])
 
   const allowEdit = () => setEditing(true)
+
+  const saveEdit = async () => {
+    await dispatch(updateRestaurant(restaurantData))
+    setEditing(false)
+  }
+
+  const cancelEdit = () => {
+    console.log(restaurantData, restaurant.data)
+    console.log(isEqual(restaurantData, restaurant.data))
+    if (isEqual({ ...restaurant.data }, { ...restaurantData }))
+      return setEditing(false)
+
+    setWarningOpen(true)
+  }
+
+  const closeDialog = () => setWarningOpen(false)
+
+  const eraseRestaurantData = () => {
+    setRestaurantData(restaurant.data)
+    closeDialog()
+  }
+
+  const createHandler = field => e =>
+    setRestaurantData({ [field]: e.target.value })
+  const createAddressHandler = field => e =>
+    setRestaurantData({
+      address: { ...restaurantData.address, [field]: e.target.value },
+    })
 
   if (!restaurant)
     return (
@@ -93,9 +133,9 @@ const Home = () => {
     <NavLayout>
       <section className={classes.root}>
         <img
-          src={restaurant.coverPicture}
+          src={restaurantData.coverPicture}
           className={classes.cover}
-          alt="Imagem de fundo do restaurnate"
+          alt="Imagem de fundo do restaurante"
         />
 
         <div className={classes.editButtonContainer}>
@@ -106,18 +146,20 @@ const Home = () => {
 
         <div className={classes.info}>
           <TextField
+            onChange={createHandler('name')}
             fullWidth
             label="Nome"
-            defaultValue={restaurant.name || ''}
+            value={restaurantData.name || ''}
             InputProps={{
               readOnly: !editing,
             }}
           />
 
           <TextField
+            onChange={createHandler('foodType')}
             fullWidth
             label="Tipo de culinária"
-            defaultValue={restaurant.foodType || ''}
+            value={restaurantData.foodType || ''}
             InputProps={{
               readOnly: !editing,
             }}
@@ -130,21 +172,23 @@ const Home = () => {
 
             <Box display="flex">
               <TextField
+                onChange={createAddressHandler('state')}
                 style={{ marginRight: 30 }}
                 margin="dense"
                 fullWidth
                 label="Estado"
-                defaultValue={restaurant.address?.state || ''}
+                value={restaurantData.address?.state || ''}
                 InputProps={{
                   readOnly: !editing,
                 }}
               />
 
               <TextField
+                onChange={createAddressHandler('city')}
                 margin="dense"
                 fullWidth
                 label="Cidade"
-                defaultValue={restaurant.address?.city || ''}
+                value={restaurantData.address?.city || ''}
                 InputProps={{
                   readOnly: !editing,
                 }}
@@ -152,10 +196,11 @@ const Home = () => {
             </Box>
 
             <TextField
+              onChange={createAddressHandler('street')}
               margin="dense"
               fullWidth
               label="Rua"
-              defaultValue={restaurant.address?.street || ''}
+              value={restaurantData.address?.street || ''}
               InputProps={{
                 readOnly: !editing,
               }}
@@ -163,21 +208,23 @@ const Home = () => {
 
             <Box display="flex">
               <TextField
+                onChange={createAddressHandler('number')}
                 style={{ marginRight: 30 }}
                 margin="dense"
                 fullWidth
                 label="Número"
-                defaultValue={restaurant.address?.number || ''}
+                value={restaurantData.address?.number || ''}
                 InputProps={{
                   readOnly: !editing,
                 }}
               />
 
               <TextField
+                onChange={createAddressHandler('complement')}
                 margin="dense"
                 fullWidth
                 label="Complemento"
-                defaultValue={restaurant.address?.complement || ''}
+                value={restaurantData.address?.complement || ''}
                 InputProps={{
                   readOnly: !editing,
                 }}
@@ -186,17 +233,20 @@ const Home = () => {
           </div>
 
           <TextField
+            onChange={createHandler('maxCapacity')}
             fullWidth
             label="Lotação"
-            defaultValue={restaurant.maxCapacity || ''}
+            value={restaurantData.maxCapacity || ''}
             InputProps={{
               readOnly: !editing,
             }}
           />
 
           <div className={classes.editControlButtons}>
-            <Button variant="contained">Salvar</Button>
-            <Button variant="outline">Cancelar</Button>
+            <Button variant="contained" onClick={saveEdit}>
+              Salvar
+            </Button>
+            <Button onClick={cancelEdit}>Cancelar</Button>
           </div>
         </div>
 
@@ -207,11 +257,35 @@ const Home = () => {
             Códigos de mesa
           </Typography>
 
-          {restaurant.tableCodes.map(code => (
+          {restaurant.data.tableCodes.map(code => (
             <Chip label={code} key={code} />
           ))}
         </div>
       </section>
+
+      <Dialog
+        open={warningOpen}
+        onClose={closeDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Há alterações não salvas
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Tem certeza que deseja descartar suas mudanças?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDialog} color="primary">
+            Não
+          </Button>
+          <Button onClick={eraseRestaurantData} color="primary">
+            Sim
+          </Button>
+        </DialogActions>
+      </Dialog>
     </NavLayout>
   )
 }
