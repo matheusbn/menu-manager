@@ -17,8 +17,10 @@ const useStyles = makeStyles(theme => ({
     minHeight: '100vh',
     padding: theme.spacing(3),
   },
+  heading: {
+    marginBottom: theme.spacing(2),
+  },
 }))
-
 const Statistics = () => {
   const classes = useStyles()
   const [loading, setLoading] = useState(false)
@@ -26,7 +28,7 @@ const Statistics = () => {
   return (
     <NavLayout>
       <section className={classes.root}>
-        <Typography variant="h6" component="h2" gutterBottom>
+        <Typography variant="h6" component="h2" className={classes.heading}>
           Sessões por dia
         </Typography>
 
