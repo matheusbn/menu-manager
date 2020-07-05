@@ -34,6 +34,8 @@ class Restaurant {
     const picSnapshot = await pictureRef.put(file)
     const url = await picSnapshot.ref.getDownloadURL()
     this.update({ coverPicture: url })
+
+    return url
   }
 
   async getMenuItems() {

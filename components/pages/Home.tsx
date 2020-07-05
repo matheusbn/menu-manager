@@ -76,13 +76,14 @@ const useStyles = makeStyles(theme => ({
     ...theme.flex.center,
     height: 60,
     '& > button': {
-      display: props => (props.editing ? 'block' : 'none'),
+      display: props => (props.editing ? 'flex' : 'none'),
     },
   },
 }))
 
 const Home = () => {
   const [coverFile, setCoverFile] = useState(null)
+  const [loadingSave, setLoadingSave] = useState(false)
   const [editing, setEditing] = useState(false)
   const [warningOpen, setWarningOpen] = useState(false)
   const dispatch = useDispatch()
@@ -97,10 +98,12 @@ const Home = () => {
   const allowEdit = () => setEditing(true)
 
   const saveEdit = async () => {
+    setLoadingSave(true)
     await dispatch(
       updateRestaurant({ ...restaurantData, coverPicture: coverFile })
     )
     setEditing(false)
+    setLoadingSave(false)
   }
 
   const cancelEdit = () => {
@@ -251,7 +254,13 @@ const Home = () => {
           />
 
           <div className={classes.editControlButtons}>
-            <Button variant="contained" onClick={saveEdit}>
+            <Button
+              variant="contained"
+              onClick={saveEdit}
+              endIcon={
+                loadingSave && <CircularProgress color="inherit" size={20} />
+              }
+            >
               Salvar
             </Button>
             <Button onClick={cancelEdit}>Cancelar</Button>

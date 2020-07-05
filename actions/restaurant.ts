@@ -3,21 +3,21 @@ export const setRestaurant = restaurant => ({
   restaurant,
 })
 
-export const updateRestaurant = fields => async (dispatch, getState) => {
+export const updateRestaurant = data => async (dispatch, getState) => {
   const { restaurant } = getState()
 
   try {
-    if (fields.coverPicture && fields.coverPicture instanceof File) {
-      await restaurant.updatePicture(fields.coverPicture)
-      delete fields.coverPicture
+    if (data.coverPicture && data.coverPicture instanceof File) {
+      const coverUrl = await restaurant.updatePicture(data.coverPicture)
+      data.coverPicture = coverUrl
     }
-    await restaurant.update(fields)
+    await restaurant.update(data)
 
     dispatch({
-      type: 'UPDATE_RESTAURANT',
-      fields,
+      type: 'UPDATE_RESTAURANT_DATA',
+      data,
     })
   } catch (e) {
-    console.error('error updating restaurant fields:', e)
+    console.error('error updating restaurant data:', e)
   }
 }
