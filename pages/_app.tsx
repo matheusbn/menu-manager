@@ -20,7 +20,6 @@ const store = createStore(reducer, applyMiddleware(thunk))
 
 export default function App({ Component, pageProps }: AppProps) {
   // there are 2 loading variables to control the splashscreen transition
-  const [loaded, setLoaded] = useState(false)
   const [loading, setLoading] = useState(true)
   const store = useStore(pageProps.initialReduxState)
   const { dispatch } = store
@@ -29,7 +28,6 @@ export default function App({ Component, pageProps }: AppProps) {
     initFirebase()
     firebase.auth().onAuthStateChanged(user => {
       setLoading(false)
-      setTimeout(() => setLoaded(true), 300)
 
       dispatch(setUser(user))
       if (user) {

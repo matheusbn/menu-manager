@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import Router from 'next/router'
 import {
   Hidden,
   Drawer,
@@ -99,7 +100,7 @@ const NavBar = () => {
             </ListItemIcon>
             <ListItemText primary="Cardápio" />
           </ListItem>
-          <ListItem button>
+          <ListItem button onClick={() => Router.push('/estatisticas')}>
             <ListItemIcon>
               <TrendingUpIcon />
             </ListItemIcon>

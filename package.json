@@ -9,6 +9,7 @@
   "dependencies": {
     "@material-ui/core": "^4.10.2",
     "@material-ui/icons": "^4.9.1",
+    "chart.js": "^2.9.3",
     "clsx": "^1.1.1",
     "firebase": "^7.15.5",
     "lodash": "^4.17.15",

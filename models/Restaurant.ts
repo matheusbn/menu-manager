@@ -2,6 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/storage'
 import 'firebase/firestore'
 import without from 'lodash/without'
+import { getNumberOfWeeks } from 'helpers/date'
 
 const proxyHandler = {
   get: function (target, prop, receiver) {
@@ -43,6 +44,35 @@ class Restaurant {
     this.update({ coverPicture: url })
 
     return url
+  }
+
+  async avgSessionsPerDay(): Promise<{ [weekday: string]: number }> {
+    const result = await this.snapshot.ref.collection('sessions').get()
+    const sessions = result.docs.map(snapshot => snapshot.data())
+
+    console.log(sessions[0].checkinAt.toDate())
+
+    const sessionDates = sessions.map(s => s.checkinAt.toDate())
+    const numberOfWeeks = getNumberOfWeeks(sessionDates)
+
+    const totalSessionsPerWeekday = sessionDates
+      .map(d => d.toLocaleDateString('pt-BR', { weekday: 'long' }))
+      .reduce(
+        (grouped, day) => ({
+          ...grouped,
+          [day]: grouped[day] != null ? grouped[day] + 1 : 1,
+        }),
+        {}
+      )
+
+    // returns the total number of session for each day divided by the number of week
+    return Object.entries(totalSessionsPerWeekday).reduce(
+      (avgPerWeekday, [weekday, numberOfSessions]) => ({
+        ...avgPerWeekday,
+        [weekday]: numberOfSessions ? numberOfSessions / numberOfWeeks : 0,
+      }),
+      {}
+    )
   }
 
   async generateCodes(amount: number) {
