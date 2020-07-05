@@ -21,8 +21,9 @@ import EditIcon from '@material-ui/icons/Edit'
 import { makeStyles } from '@material-ui/core/styles'
 import useSetState from 'hooks/useSetState'
 import NavLayout from 'components/NavLayout'
-import isEmpty from 'lodash/isEmpty'
+import CoverPictureUpload from 'components/CoverPictureUpload'
 import isEqual from 'lodash/isEqual'
+import { toBase64 } from 'helpers'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,7 +57,6 @@ const useStyles = makeStyles(theme => ({
   cover: {
     width: '100%',
     height: 300,
-    objectFit: 'cover',
   },
   address: {
     marginLeft: theme.spacing(5),
@@ -82,6 +82,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Home = () => {
+  const [coverFile, setCoverFile] = useState(null)
   const [editing, setEditing] = useState(false)
   const [warningOpen, setWarningOpen] = useState(false)
   const dispatch = useDispatch()
@@ -96,13 +97,13 @@ const Home = () => {
   const allowEdit = () => setEditing(true)
 
   const saveEdit = async () => {
-    await dispatch(updateRestaurant(restaurantData))
+    await dispatch(
+      updateRestaurant({ ...restaurantData, coverPicture: coverFile })
+    )
     setEditing(false)
   }
 
   const cancelEdit = () => {
-    console.log(restaurantData, restaurant.data)
-    console.log(isEqual(restaurantData, restaurant.data))
     if (isEqual({ ...restaurant.data }, { ...restaurantData }))
       return setEditing(false)
 
@@ -123,6 +124,12 @@ const Home = () => {
       address: { ...restaurantData.address, [field]: e.target.value },
     })
 
+  const handleCoverChange = async file => {
+    setCoverFile(file)
+    const pic = await toBase64(file)
+    setRestaurantData({ coverPicture: pic })
+  }
+
   if (!restaurant)
     return (
       <NavLayout className={classes.centered}>
@@ -132,10 +139,11 @@ const Home = () => {
   return (
     <NavLayout>
       <section className={classes.root}>
-        <img
-          src={restaurantData.coverPicture}
+        <CoverPictureUpload
+          value={restaurantData.coverPicture}
+          onChange={handleCoverChange}
           className={classes.cover}
-          alt="Imagem de fundo do restaurante"
+          editing={editing}
         />
 
         <div className={classes.editButtonContainer}>

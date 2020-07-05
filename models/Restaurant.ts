@@ -1,4 +1,5 @@
 import firebase from 'firebase/app'
+import 'firebase/storage'
 import 'firebase/firestore'
 
 const proxyHandler = {
@@ -20,6 +21,19 @@ class Restaurant {
 
   async update(...args) {
     return this.snapshot.ref.update(...args)
+  }
+
+  async updatePicture(file: File) {
+    const storageRef = firebase.storage().ref()
+
+    const extension = file.name.split('.').pop()
+    const pictureRef = storageRef.child(
+      `${this.snapshot.id}/cover.${extension}`
+    )
+
+    const picSnapshot = await pictureRef.put(file)
+    const url = await picSnapshot.ref.getDownloadURL()
+    this.update({ coverPicture: url })
   }
 
   async getMenuItems() {
