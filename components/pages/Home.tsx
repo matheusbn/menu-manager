@@ -22,6 +22,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import useSetState from 'hooks/useSetState'
 import NavLayout from 'components/NavLayout'
 import CoverPictureUpload from 'components/CoverPictureUpload'
+import TableCodesGenerator from 'components/TableCodesGenerator'
 import isEqual from 'lodash/isEqual'
 import { toBase64 } from 'helpers'
 
@@ -32,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '100vh',
     '& hr': {
       marginTop: theme.spacing(4),
-      marginBottom: theme.spacing(4),
+      marginBottom: theme.spacing(2),
     },
   },
   centered: {
@@ -64,9 +65,6 @@ const useStyles = makeStyles(theme => ({
   tableCodes: {
     maxWidth: 600,
     margin: '0 auto',
-    '& > *': {
-      margin: theme.spacing(1),
-    },
   },
   editButtonContainer: {
     display: 'flex',
@@ -269,15 +267,10 @@ const Home = () => {
 
         <Divider />
 
-        <div className={classes.tableCodes}>
-          <Typography variant="body1" style={{ marginBottom: 10 }}>
-            Códigos de mesa
-          </Typography>
-
-          {restaurant.data.tableCodes.map(code => (
-            <Chip label={code} key={code} />
-          ))}
-        </div>
+        <TableCodesGenerator
+          className={classes.tableCodes}
+          value={restaurantData.tableCodes || []}
+        />
       </section>
 
       <Dialog

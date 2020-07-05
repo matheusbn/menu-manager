@@ -21,3 +21,19 @@ export const updateRestaurant = data => async (dispatch, getState) => {
     console.error('error updating restaurant data:', e)
   }
 }
+
+export const generateCodes = (amount: number) => async (dispatch, getState) => {
+  const { restaurant } = getState()
+
+  try {
+    const codes = await restaurant.generateCodes(amount)
+    const tableCodes = [...restaurant.data.tableCodes, ...codes]
+
+    dispatch({
+      type: 'UPDATE_RESTAURANT_DATA',
+      data: { tableCodes },
+    })
+  } catch (e) {
+    console.error('error updating restaurant data:', e)
+  }
+}
