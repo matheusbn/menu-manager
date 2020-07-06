@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import EditIcon from '@material-ui/icons/Edit'
-import { updateRestaurantPicture } from 'actions'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 
@@ -23,12 +22,12 @@ const useStyles = makeStyles(theme => ({
 
     '&:hover': {
       '& .cover-picture__overlay': {
-        opacity: props => props.editing && 1,
+        opacity: (props: any) => props.editing && 1,
       },
     },
 
     '& .cover-picture__overlay': {
-      cursor: props => (props.editing ? 'pointer' : 'default'),
+      cursor: (props: any) => (props.editing ? 'pointer' : 'default'),
       '& .MuiSvgIcon-root': {
         color: 'white',
         fontSize: '2rem',

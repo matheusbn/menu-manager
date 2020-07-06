@@ -16,10 +16,12 @@ interface ChartProps {
   options?: object
 }
 
-const Chart = (props: ChartProps) => {
-  const chart = useRef(null)
+const Chart = (props: Chartjs.ChartConfiguration) => {
+  const chart: React.MutableRefObject<Chartjs | null> = useRef(null)
 
   useEffect(() => {
+    if (chart.current == null || !props.data) return
+
     chart.current.data = props.data
     chart.current.update()
   }, [props.data])

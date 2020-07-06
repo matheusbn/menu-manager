@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
     margin: '0 auto',
 
     '& .MuiInputBase-input': {
-      cursor: props => (props.editing ? 'text' : 'default'),
+      cursor: (props: any) => (props.editing ? 'text' : 'default'),
     },
 
     '& > *': {
@@ -74,7 +74,7 @@ const useStyles = makeStyles(theme => ({
     ...theme.flex.center,
     height: 60,
     '& > button': {
-      display: props => (props.editing ? 'flex' : 'none'),
+      display: (props: any) => (props.editing ? 'flex' : 'none'),
     },
   },
 }))
@@ -87,7 +87,7 @@ const Home = () => {
   const dispatch = useDispatch()
   const classes = useStyles({ editing })
   const restaurant = useSelector(state => state.restaurant)
-  const [restaurantData, setRestaurantData] = useSetState([])
+  const [restaurantData, setRestaurantData] = useSetState({})
 
   useEffect(() => {
     if (restaurant) setRestaurantData(restaurant.data)
@@ -148,7 +148,7 @@ const Home = () => {
         />
 
         <div className={classes.editButtonContainer}>
-          <IconButton className={classes.editButton} onClick={allowEdit}>
+          <IconButton onClick={allowEdit}>
             <EditIcon color="secondary" />
           </IconButton>
         </div>
@@ -269,7 +269,7 @@ const Home = () => {
 
         <TableCodesGenerator
           className={classes.tableCodes}
-          value={restaurantData.tableCodes || []}
+          value={(restaurantData.tableCodes as string[]) || []}
         />
       </section>
 

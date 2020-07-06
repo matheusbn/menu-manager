@@ -10,11 +10,13 @@ const user = (state = null, action) => {
   }
 }
 
-const restaurant = (state: Restaurant = null, action) => {
+const restaurant = (state: Restaurant | null = null, action) => {
   switch (action.type) {
     case `SET_RESTAURANT`:
       return action.restaurant
     case `UPDATE_RESTAURANT_DATA`:
+      if (!state?.data) return { ...state, data: action.data }
+
       return {
         ...state,
         data: {

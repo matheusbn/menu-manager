@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
   codes: {
     transition: 'filter 1s',
-    filter: props => props.loading && 'blur(3px)',
+    filter: (props: any) => props.loading && 'blur(3px)',
     minHeight: 200,
     padding: theme.spacing(1),
     marginBottom: theme.spacing(4),
@@ -55,16 +55,10 @@ const useStyles = makeStyles(theme => ({
 
 interface CoverPictureUploadProps {
   value: string[]
-  editing: boolean
   className?: string
-  onChange: (file: File) => void
 }
 
-const CoverPictureUpload = ({
-  value,
-  editing,
-  className,
-}: CoverPictureUploadProps) => {
+const CoverPictureUpload = ({ value, className }: CoverPictureUploadProps) => {
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const [amount, setAmount] = useState(5)
@@ -79,7 +73,7 @@ const CoverPictureUpload = ({
   const handleConfirm = async () => {
     setLoading(true)
     closeDialog()
-    await dispatch(generateCodes(parseInt(amount, 10)))
+    await dispatch(generateCodes(Number(amount)))
     setLoading(false)
   }
 

@@ -11,9 +11,10 @@ const Index = () => {
   return <Signin />
 }
 
-// export async function getServerSideProps({ req, res }) {
-//   // console.log(req?.headers)
-//   // console.log(req?.headers?.cookie)
-// }
+export function getStaticProps(ctx) {
+  return {
+    props: {},
+  }
+}
 
 export default Index

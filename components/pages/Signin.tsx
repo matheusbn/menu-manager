@@ -36,9 +36,9 @@ const Signin = () => {
   const classes = useStyles()
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
-  const [error, setError] = useState({
-    email: null,
-    password: null,
+  const [error, setError] = useState<{ [field: string]: string }>({
+    email: '',
+    password: '',
   })
   const [password, setPassword] = useState('')
 

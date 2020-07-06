@@ -41,3 +41,18 @@ interface Order {
   items: ItemOrder[]
   orderedAt?: Date
 }
+
+interface RestaurantData {
+  name: string
+  coverPicture: string
+  foodType: string
+  maxCapacity: number
+  address: {
+    city: string
+    state: string
+    street: string
+    number: string
+    complement: string
+  }
+  tableCodes: string[]
+}

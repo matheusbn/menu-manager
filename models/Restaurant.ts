@@ -66,10 +66,14 @@ class Restaurant {
       )
 
     // returns the total number of session for each day divided by the number of week
-    return Object.entries(totalSessionsPerWeekday).reduce(
+    return Object.entries(totalSessionsPerWeekday).reduce<{
+      [weekday: string]: number
+    }>(
       (avgPerWeekday, [weekday, numberOfSessions]) => ({
         ...avgPerWeekday,
-        [weekday]: numberOfSessions ? numberOfSessions / numberOfWeeks : 0,
+        [weekday]: numberOfSessions
+          ? <number>numberOfSessions / numberOfWeeks
+          : 0,
       }),
       {}
     )

@@ -2,11 +2,12 @@ import React, { useMemo, useState, useEffect } from 'react'
 import { useTheme } from '@material-ui/core/styles'
 import Chart from 'components/Chart'
 import { useSelector } from 'react-redux'
+import { ChartDataSets } from 'chart.js'
 
 const ClientPerDayChart = () => {
   const theme = useTheme()
   const restaurant = useSelector(state => state.restaurant)
-  const [datasets, setDatasets] = useState([])
+  const [datasets, setDatasets] = useState<ChartDataSets[]>([])
   const labels = [
     'Segunda',
     'Terça',
