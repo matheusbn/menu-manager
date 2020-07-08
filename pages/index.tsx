@@ -11,10 +11,4 @@ const Index = () => {
   return <Signin />
 }
 
-export function getStaticProps(ctx) {
-  return {
-    props: {},
-  }
-}
-
 export default Index

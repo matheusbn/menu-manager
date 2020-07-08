@@ -88,13 +88,13 @@ const NavBar = () => {
         <Divider />
 
         <List>
-          <ListItem button>
+          <ListItem button onClick={() => Router.push('/')}>
             <ListItemIcon>
               <AssignmentIcon />
             </ListItemIcon>
             <ListItemText primary="Informações" />
           </ListItem>
-          <ListItem button>
+          <ListItem button onClick={() => Router.push('/cardapio')}>
             <ListItemIcon>
               <FastfoodIcon />
             </ListItemIcon>

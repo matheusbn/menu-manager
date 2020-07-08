@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import Router from 'next/router'
-import {
-  Button,
-  Typography,
-  CircularProgress,
-  TextField,
-} from '@material-ui/core'
+import { Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
 import SessionsPerDayChart from 'components/SessionsPerDayChart'
-import firebase from 'firebase/app'
-import 'firebase/auth'
 
 const useStyles = makeStyles(theme => ({
   root: {
