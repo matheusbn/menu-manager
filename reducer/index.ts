@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 import Restaurant from 'models/Restaurant'
+import MenuItem from 'models/MenuItem'
 
 const user = (state = null, action) => {
   switch (action.type) {
@@ -29,10 +30,22 @@ const restaurant = (state: Restaurant | null = null, action) => {
   }
 }
 
-const menuItems = (state: Item[] = [], action) => {
+const menuItems = (state: MenuItem[] = [], action) => {
   switch (action.type) {
     case `SET_MENU_ITEMS`:
       return action.menuItems
+    case `UPDATE_MENU_ITEM`:
+      return state.map(item => {
+        if (!item.id !== action.menuItem) return item
+
+        return {
+          ...item,
+          data: {
+            ...item.data,
+            ...action.data,
+          },
+        }
+      })
     default:
       return state
   }

@@ -1,6 +1,8 @@
 import React from 'react'
+import Router from 'next/router'
 import { Paper, Typography, ListItem } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import { formatMoney } from 'helpers'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,12 +58,16 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-export default ({ item, onClick }) => {
+export default ({ item }) => {
   const classes = useStyles()
+
+  const handleClick = () => {
+    Router.push(`/cardapio/[itemId]`, `/cardapio/${item.id}`)
+  }
 
   return (
     <Paper elevation={1} className={classes.root}>
-      <ListItem button onClick={onClick} disableGutters>
+      <ListItem button onClick={handleClick} disableGutters>
         <img
           src={item.pictures[0]}
           alt="Foto do prato"
@@ -83,7 +89,7 @@ export default ({ item, onClick }) => {
 
           <div className={classes.price}>
             <span>R$ </span>
-            {/* {formatMoney(item.price)} */}
+            {formatMoney(item.price)}
           </div>
         </div>
       </ListItem>

@@ -4,14 +4,6 @@ import 'firebase/firestore'
 import without from 'lodash/without'
 import { getNumberOfWeeks } from 'helpers/date'
 
-const proxyHandler = {
-  get: function (target, prop, receiver) {
-    if (Reflect.has(target, prop)) return Reflect.get(target, prop, receiver)
-
-    return target.snapshot.data()[prop]
-  },
-}
-
 function generateRandomCodes(amount) {
   return Array(amount)
     .fill(null)
@@ -19,7 +11,7 @@ function generateRandomCodes(amount) {
 }
 
 class Restaurant {
-  snapshot
+  private snapshot
   data
 
   constructor(snapshot) {
@@ -46,6 +38,7 @@ class Restaurant {
     return url
   }
 
+  // TODO: replace this with a cloud function
   async avgSessionsPerDay(): Promise<{ [weekday: string]: number }> {
     const result = await this.snapshot.ref.collection('sessions').get()
     const sessions = result.docs.map(snapshot => snapshot.data())
@@ -79,6 +72,7 @@ class Restaurant {
     )
   }
 
+  // TODO: replace this with a cloud function
   async generateCodes(amount: number) {
     if (amount > 10)
       throw new Error("Can't generate more than 10 codes at once")
@@ -117,10 +111,7 @@ class Restaurant {
   async getMenuItems() {
     const querySnapshot = await this.snapshot.ref.collection('items').get()
 
-    return querySnapshot.docs.map(snapshot => ({
-      id: snapshot.id,
-      ...snapshot.data(),
-    }))
+    return querySnapshot.docs
   }
 
   static async fromUser(userId: string): Promise<Restaurant | null> {

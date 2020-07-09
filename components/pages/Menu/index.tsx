@@ -7,10 +7,13 @@ import {
   Button,
   CircularProgress,
   TextField,
+  Fab,
 } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add'
 import { withStyles, makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
 import Item from './Item'
+import MenuItem from 'models/MenuItem'
 import MenuSection from './Item'
 import capitalize from 'lodash/capitalize'
 // import Item from 'components/Item'
@@ -20,7 +23,11 @@ const useStyles = makeStyles(theme => ({
     height: '100vh',
     padding: theme.spacing(2),
   },
-
+  addButton: {
+    position: 'fixed',
+    bottom: 30,
+    right: 30,
+  },
   menuSection: {
     padding: theme.spacing(1),
     paddingRight: theme.spacing(2),
@@ -32,6 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
   sectionName: {
     display: 'block',
+    fontSize: '1.1rem',
     borderBottom: '1px solid #0004',
     paddingLeft: theme.spacing(1),
     marginBottom: theme.spacing(2),
@@ -39,21 +47,23 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const getDistinctSections = items =>
-  items.reduce(
-    (acc, { section }) =>
-      !acc.includes(section.toLowerCase())
-        ? [...acc, section.toLowerCase()]
-        : acc,
-    []
-  )
+const getDistinctSections = (items: MenuItem[]) =>
+  items
+    .map(i => i.data.section)
+    .reduce(
+      (acc, { section }) =>
+        !acc.includes(section.toLowerCase())
+          ? [...acc, section.toLowerCase()]
+          : acc,
+      []
+    )
 
-const getOrganizedSections = items => {
+const getOrganizedSections = (items: MenuItem[]) => {
   const sections = getDistinctSections(items)
 
   return sections.map(section => ({
     name: section,
-    items: items.filter(item => item.section.toLowerCase() === section),
+    items: items.filter(item => item.data.section.toLowerCase() === section),
   }))
 }
 
@@ -70,22 +80,24 @@ function Menu() {
   return (
     <NavLayout>
       <section className={classes.root}>
-        <div>
-          {menuSections.map(section => (
-            <div className={classes.menuSection} key={section.name}>
-              <Typography
-                className={classes.sectionName}
-                component="h2"
-                variant="body2"
-              >
-                {capitalize(section.name)}
-              </Typography>
-              {section.items.map(item => (
-                <Item item={item} key={item.id} />
-              ))}
-            </div>
-          ))}
-        </div>
+        {menuSections.map(section => (
+          <div className={classes.menuSection} key={section.name}>
+            <Typography
+              className={classes.sectionName}
+              component="h2"
+              variant="body2"
+            >
+              {capitalize(section.name)}
+            </Typography>
+            {section.items.map(item => (
+              <Item item={item.data} key={item.id} />
+            ))}
+          </div>
+        ))}
+
+        <Fab color="primary" aria-label="add" className={classes.addButton}>
+          <AddIcon color="inherit" />
+        </Fab>
       </section>
     </NavLayout>
   )

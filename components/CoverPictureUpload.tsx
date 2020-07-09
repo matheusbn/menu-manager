@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
 
 interface CoverPictureUploadProps {
   value: string
-  editing: boolean
+  editing?: boolean
   className?: string
   onChange: (file: File) => void
 }
@@ -56,10 +56,9 @@ interface CoverPictureUploadProps {
 const CoverPictureUpload = ({
   value,
   onChange,
-  editing,
+  editing = true,
   className,
 }: CoverPictureUploadProps) => {
-  const dispatch = useDispatch()
   const classes = useStyles({ editing })
 
   const handleUpload = e => {
