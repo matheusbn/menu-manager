@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import Router from 'next/router'
-import {
-  Typography,
-  IconButton,
-  Button,
-  CircularProgress,
-  TextField,
-  Fab,
-} from '@material-ui/core'
+import { Typography, Fab } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import { withStyles, makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
@@ -90,7 +83,13 @@ function Menu() {
               {capitalize(section.name)}
             </Typography>
             {section.items.map(item => (
-              <Item item={item.data} key={item.id} />
+              <Item
+                onClick={() =>
+                  Router.push(`/cardapio/[itemId]`, `/cardapio/${item.id}`)
+                }
+                item={item.data}
+                key={item.id}
+              />
             ))}
           </div>
         ))}

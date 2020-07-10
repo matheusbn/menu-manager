@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import {
-  Paper,
-  IconButton,
-  CircularProgress,
-  TextField,
-  Typography,
-} from '@material-ui/core'
+import { Paper, IconButton, TextField, Typography } from '@material-ui/core'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
 import { makeStyles } from '@material-ui/core/styles'
+import { createKeyGenerator } from 'helpers'
+
+const keyGen = createKeyGenerator()
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
   options: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(4),
   },
   row: {
     display: 'flex',
@@ -43,6 +40,20 @@ const useStyles = makeStyles(theme => ({
   addOptionButton: {
     width: 50,
     marginLeft: -25,
+  },
+  option: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    '& .option__remove-button': {
+      transition: 'opacity .2s',
+      opacity: 0,
+    },
+    '&:hover': {
+      '& .option__remove-button': {
+        opacity: 1,
+      },
+    },
   },
 }))
 
@@ -67,7 +78,10 @@ const OptionalInput = ({ optional, onChange }: Props) => {
     })
   }, [name, required, options])
 
-  const addOption = () => setOptions(prev => [...prev, {}])
+  const addOption = () => setOptions(prev => [...prev, { name: '' }])
+  const removeOption = option => {
+    setOptions(prev => prev.filter(o => o !== option))
+  }
 
   const handleMin = e =>
     setRequired(prev => ({
@@ -80,24 +94,24 @@ const OptionalInput = ({ optional, onChange }: Props) => {
       max: parseInt(e.target.value, 10),
     }))
 
-  const createOptionNameHandler = optionName => e => {
+  const createOptionNameHandler = option => e => {
     setOptions(
-      options.map(option => {
-        if (option.name !== optionName) return option
+      options.map(opt => {
+        if (opt !== option) return opt
         return {
-          ...option,
+          ...opt,
           name: e.target.value,
         }
       })
     )
   }
 
-  const createOptionPriceHandler = optionName => e => {
+  const createOptionPriceHandler = option => e => {
     setOptions(
-      options.map(option => {
-        if (option.name !== optionName) return option
+      options.map(opt => {
+        if (opt !== option) return opt
         return {
-          ...option,
+          ...opt,
           price: Number(e.target.value),
         }
       })
@@ -135,26 +149,32 @@ const OptionalInput = ({ optional, onChange }: Props) => {
 
       <div className={classes.options}>
         {options.map(option => (
-          <div className={classes.row}>
+          <div className={classes.row} key={keyGen()}>
             <div className={classes.outlineBox}>
               <div />
             </div>
-            <div className={classes.row} key={option.name}>
+            <div className={classes.option}>
               <TextField
                 fullWidth
-                onChange={createOptionNameHandler(option.name)}
+                onChange={createOptionNameHandler(option)}
                 label="Nome"
                 value={option.name}
                 required
                 className={classes.input}
               />
               <TextField
-                onChange={createOptionPriceHandler(option.name)}
+                onChange={createOptionPriceHandler(option)}
                 value={option.price}
                 label="Preço"
                 type="number"
                 className={classes.input}
               />
+              <IconButton
+                className="option__remove-button"
+                onClick={() => removeOption(option)}
+              >
+                <RemoveCircleIcon color="inherit" />
+              </IconButton>
             </div>
           </div>
         ))}

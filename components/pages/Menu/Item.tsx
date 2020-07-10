@@ -58,16 +58,12 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-export default ({ item }) => {
+export default ({ item, onClick }) => {
   const classes = useStyles()
-
-  const handleClick = () => {
-    Router.push(`/cardapio/[itemId]`, `/cardapio/${item.id}`)
-  }
 
   return (
     <Paper elevation={1} className={classes.root}>
-      <ListItem button onClick={handleClick} disableGutters>
+      <ListItem button onClick={onClick} disableGutters>
         <img
           src={item.pictures[0]}
           alt="Foto do prato"
