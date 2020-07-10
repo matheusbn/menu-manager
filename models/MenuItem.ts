@@ -3,7 +3,7 @@ import 'firebase/storage'
 import 'firebase/firestore'
 
 class MenuItem {
-  snapshot
+  private snapshot
   data
 
   constructor(snapshot) {
@@ -11,12 +11,12 @@ class MenuItem {
     this.data = this.snapshot.data()
   }
 
-  async update(...args) {
-    return this.snapshot.ref.update(...args)
-  }
-
   get id() {
     return this.snapshot.id
+  }
+
+  async update(...args) {
+    return this.snapshot.ref.update(...args)
   }
 }
 

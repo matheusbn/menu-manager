@@ -51,7 +51,7 @@ const getDistinctSections = (items: MenuItem[]) =>
   items
     .map(i => i.data.section)
     .reduce(
-      (acc, { section }) =>
+      (acc, section) =>
         !acc.includes(section.toLowerCase())
           ? [...acc, section.toLowerCase()]
           : acc,
