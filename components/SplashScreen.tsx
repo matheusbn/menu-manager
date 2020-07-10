@@ -8,7 +8,8 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     zIndex: 2000,
     height: '100vh',
-    backgroundColor: `${theme.palette.primary.main}20`,
+    // backgroundColor: ``,
+    background: `radial-gradient(${theme.palette.primary.main}10, ${theme.palette.primary.main}70)`,
     ...theme.flex.center,
 
     '& img': {

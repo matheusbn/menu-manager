@@ -9,7 +9,8 @@ const useStyles = makeStyles(theme => ({
   root: {
     height: '100vh',
     ...theme.flex.center,
-    backgroundColor: `${theme.palette.primary.main}30`,
+    // backgroundColor: `${theme.palette.primary.main}30`,
+    background: `radial-gradient(${theme.palette.primary.main}10, ${theme.palette.primary.main}80)`,
   },
   box: {
     boxShadow: theme.shadows[22],
