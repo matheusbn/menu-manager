@@ -95,7 +95,7 @@ const ItemProfile = () => {
   const handleAddOptionalSubmit = optional => {
     dispatch(
       updateMenuItemData(item.ref, {
-        optionals: [...item.data.optionals, optional],
+        optionals: [...(item.data.optionals || []), optional],
       })
     )
   }
@@ -199,7 +199,7 @@ const ItemProfile = () => {
           </Typography>
 
           <Paper elevation={8} style={{ padding: 0 }}>
-            {itemData.optionals.map((optional, i) => (
+            {itemData.optionals?.map((optional, i) => (
               <Optional
                 optional={optional}
                 onDelete={() => handleOptionalDelete(i)}
