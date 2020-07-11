@@ -4,16 +4,18 @@ import { useStore, useSelector, useDispatch } from 'react-redux'
 import { updateMenuItemData } from 'actions'
 import {
   Tooltip,
+  Paper,
   Button,
   CircularProgress,
   TextField,
   Typography,
 } from '@material-ui/core'
+import EditIcon from '@material-ui/icons/Edit'
 import MenuItem from 'models/MenuItem'
 import { makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
+import Optional from './Optional'
 import useSetState from 'hooks/useSetState'
-import OptionalInput from './OptionalInput'
 import remove from 'lodash/remove'
 
 const useStyles = makeStyles(theme => ({
@@ -166,10 +168,16 @@ const ItemProfile = () => {
             Opcionais
           </Typography>
 
-          <OptionalInput
+          <Paper elevation={8} style={{ padding: 0 }}>
+            {itemData.optionals.map(optional => (
+              <Optional optional={optional} key={optional.name} />
+            ))}
+          </Paper>
+
+          {/* <OptionalInput
             optional={itemData.optionals[0]}
             onChange={createOptionalHandler(itemData.optionals[0].name)}
-          />
+          /> */}
 
           {/* {item.optionals.map(optional => (
             <OptionalInput
