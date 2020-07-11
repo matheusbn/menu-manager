@@ -14,7 +14,7 @@ import { Close as CloseIcon, Edit as EditIcon } from '@material-ui/icons'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 import { TransitionProps } from '@material-ui/core/transitions'
-
+import omitBy from 'lodash/omitBy'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle'
 
@@ -87,7 +87,7 @@ const Transition = React.forwardRef(function Transition(
 })
 
 interface OptionalDialogProps {
-  isUpdate: boolean
+  isUpdate?: boolean
   optional: Optional
   onSubmit: (optional: Optional) => void
   open: boolean
@@ -108,14 +108,17 @@ const OptionalDialog = ({
   )
   const [options, setOptions] = useState<Option[]>(optional.options || [])
 
+  const removeEmptyProperties = obj =>
+    omitBy(obj, value => typeof value == null)
+
   const submit = () => {
     const newOptional = {
       name,
-      required, // filter
+      required: removeEmptyProperties(required), // filter
       options: options.filter(o => !!o.name),
     }
 
-    onSubmit(newOptional)
+    onSubmit(removeEmptyProperties(newOptional))
     onClose()
   }
 
@@ -154,9 +157,8 @@ const OptionalDialog = ({
   const createOptionPriceHandler = i => e => {
     const newOptions = options.slice()
     const value = Number(e.target.value)
-    newOptions[i].price = isNaN(value) ? newOptions[i].price : value
-
-    setOptions(newOptions)
+    ;(newOptions[i].price = isNaN(value) || value < 1 ? null : value),
+      setOptions(newOptions)
   }
 
   return (
@@ -181,13 +183,13 @@ const OptionalDialog = ({
             <TextField
               onChange={handleMin}
               label="Mínimo"
-              value={required.min}
+              value={required.min || ''}
               type="number"
               className={clsx(classes.input, classes.inputRequired)}
             />
             <TextField
               onChange={handleMax}
-              value={required.max}
+              value={required.max || ''}
               label="Máximo"
               type="number"
               className={clsx(classes.input, classes.inputRequired)}
@@ -212,7 +214,7 @@ const OptionalDialog = ({
                 />
                 <TextField
                   onChange={createOptionPriceHandler(i)}
-                  value={option.price}
+                  value={option.price || ''}
                   label="Preço"
                   type="number"
                   className={classes.input}

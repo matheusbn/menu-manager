@@ -1,4 +1,6 @@
 import { combineReducers } from 'redux'
+import 'firebase/storage'
+import 'firebase/firestore'
 import Restaurant from 'models/Restaurant'
 import MenuItem from 'models/MenuItem'
 
@@ -30,13 +32,18 @@ const restaurant = (state: Restaurant | null = null, action) => {
   }
 }
 
-const menuItems = (state: MenuItem[] = [], action) => {
+interface MenuItemsState {
+  ref: firebase.firestore.DocumentReference
+  data: object
+}
+
+const menuItems = (state: MenuItemsState[] = [], action) => {
   switch (action.type) {
     case `SET_MENU_ITEMS`:
       return action.menuItems
     case `UPDATE_MENU_ITEM_DATA`:
       return state.map(item => {
-        if (item.id !== action.menuItem.id) return item
+        if (item.ref.id !== action.ref.id) return item
 
         return {
           ...item,

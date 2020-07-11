@@ -12,9 +12,16 @@ export const fetchInitialData = user => async dispatch => {
     type: 'SET_RESTAURANT',
     restaurant,
   })
-  const menuItems = await restaurant.getMenuItems()
+
+  const menuItemsSnapshot = await restaurant.getMenuItems()
+
+  console.log(menuItemsSnapshot)
+
   dispatch({
     type: 'SET_MENU_ITEMS',
-    menuItems: menuItems.map(item => new MenuItem(item)),
+    menuItems: menuItemsSnapshot.map(snapshot => ({
+      ref: snapshot.ref,
+      data: snapshot.data(),
+    })),
   })
 }

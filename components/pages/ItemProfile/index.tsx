@@ -61,8 +61,8 @@ const ItemProfile = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const router = useRouter()
-  const item: MenuItem = useSelector(state =>
-    state.menuItems.find(i => i.snapshot.id === router.query.itemId)
+  const item = useSelector(state =>
+    state.menuItems.find(i => i.ref.id === router.query.itemId)
   )
   const [loadingSave, setLoadingSave] = useState(false)
   const [itemData, setItemData] = useSetState(null)
@@ -82,7 +82,7 @@ const ItemProfile = () => {
   const handleAddOptionalSubmit = optional => {
     console.log(item)
     dispatch(
-      updateMenuItemData(item, {
+      updateMenuItemData(item.ref, {
         optionals: [...item.data.optionals, optional],
       })
     )
@@ -91,20 +91,20 @@ const ItemProfile = () => {
   const handleOptionalSubmit = i => optional => {
     const newOptionals = item.data.optionals.slice()
     newOptionals[i] = optional
-    dispatch(updateMenuItemData(item, { optionals: newOptionals }))
+    dispatch(updateMenuItemData(item.ref, { optionals: newOptionals }))
   }
 
   const handleOptionalDelete = optionalIndex => {
     const newOptionals = item.data.optionals.filter(
       (_, i) => i !== optionalIndex
     )
-    dispatch(updateMenuItemData(item, { optionals: newOptionals }))
+    dispatch(updateMenuItemData(item.ref, { optionals: newOptionals }))
   }
 
   const saveEdit = async () => {
     setLoadingSave(true)
 
-    dispatch(updateMenuItemData(item, itemData))
+    dispatch(updateMenuItemData(item.ref, itemData))
 
     setLoadingSave(false)
   }
