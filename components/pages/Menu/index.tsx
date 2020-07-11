@@ -7,7 +7,6 @@ import { withStyles, makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
 import Item from './Item'
 import MenuItem from 'models/MenuItem'
-import MenuSection from './Item'
 import capitalize from 'lodash/capitalize'
 // import Item from 'components/Item'
 
@@ -40,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const getDistinctSections = (items: MenuItem[]) =>
+const getDistinctSections = items =>
   items
     .map(i => i.data.section)
     .reduce(
@@ -51,7 +50,7 @@ const getDistinctSections = (items: MenuItem[]) =>
       []
     )
 
-const getOrganizedSections = (items: MenuItem[]) => {
+const getOrganizedSections = items => {
   const sections = getDistinctSections(items)
 
   return sections.map(section => ({
@@ -65,8 +64,6 @@ function Menu() {
   const menuItems = useSelector(state => state.menuItems)
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
-
-  console.log(menuItems)
 
   const menuSections = getOrganizedSections(menuItems)
 
@@ -85,10 +82,10 @@ function Menu() {
             {section.items.map(item => (
               <Item
                 onClick={() =>
-                  Router.push(`/cardapio/[itemId]`, `/cardapio/${item.id}`)
+                  Router.push(`/cardapio/[itemId]`, `/cardapio/${item.ref.id}`)
                 }
                 item={item.data}
-                key={item.id}
+                key={item.ref.id}
               />
             ))}
           </div>

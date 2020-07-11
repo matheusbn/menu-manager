@@ -10,8 +10,9 @@ function generateRandomCodes(amount) {
     .map(() => Math.random().toString(36).substr(2, 5).toUpperCase())
 }
 
+// TODO: refactor to store just ref and data on redux
 class Restaurant {
-  private snapshot
+  snapshot
   data
 
   constructor(snapshot) {

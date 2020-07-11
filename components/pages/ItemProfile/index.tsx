@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useStore, useSelector, useDispatch } from 'react-redux'
 import { updateMenuItemData } from 'actions'
+import useToast from 'hooks/useToast'
 import {
   Tooltip,
   Paper,
@@ -15,8 +16,10 @@ import AddCircleIcon from '@material-ui/icons/AddCircle'
 import MenuItem from 'models/MenuItem'
 import { makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
+import PictureInput from 'components/PictureInput'
 import Optional from './Optional'
 import OptionalDialog from './OptionalDialog'
+import { toBase64 } from 'helpers'
 import useSetState from 'hooks/useSetState'
 
 const useStyles = makeStyles(theme => ({
@@ -35,7 +38,9 @@ const useStyles = makeStyles(theme => ({
   },
   pictures: {
     width: '45%',
+    flex: 'none',
     borderRadius: 4,
+    overflow: 'hidden',
     marginRight: theme.spacing(3),
   },
   input: {
@@ -61,10 +66,12 @@ const ItemProfile = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const router = useRouter()
+  const showToast = useToast()
   const item = useSelector(state =>
     state.menuItems.find(i => i.ref.id === router.query.itemId)
   )
   const [loadingSave, setLoadingSave] = useState(false)
+  const [pictureFile, setPictureFile] = useState(null)
   const [itemData, setItemData] = useSetState(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -79,8 +86,13 @@ const ItemProfile = () => {
     }
   }, [item])
 
+  const handlePictureChange = async file => {
+    setPictureFile(file)
+    const pic = await toBase64(file).catch(console.error)
+    setItemData({ pictures: [pic] })
+  }
+
   const handleAddOptionalSubmit = optional => {
-    console.log(item)
     dispatch(
       updateMenuItemData(item.ref, {
         optionals: [...item.data.optionals, optional],
@@ -104,8 +116,10 @@ const ItemProfile = () => {
   const saveEdit = async () => {
     setLoadingSave(true)
 
-    dispatch(updateMenuItemData(item.ref, itemData))
-
+    const data = { ...itemData }
+    if (pictureFile) data.pictures = [pictureFile]
+    await dispatch(updateMenuItemData(item.ref, data))
+    showToast('Item atualizado com sucesso!')
     setLoadingSave(false)
   }
 
@@ -126,11 +140,12 @@ const ItemProfile = () => {
     <NavLayout>
       <section className={classes.root}>
         <div className={classes.topSection}>
-          <img
-            src={itemData.pictures[0]}
-            alt="Foto do prato"
+          <PictureInput
+            value={itemData.pictures[0]}
+            onChange={handlePictureChange}
             className={classes.pictures}
           />
+
           <div>
             <TextField
               variant="filled"

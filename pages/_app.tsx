@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import '../index.css'
@@ -13,6 +13,8 @@ import { Provider } from 'react-redux'
 import initFirebase from 'services/initFirebase'
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import Toast from 'components/toast'
+import ToastContext from 'contexts/toast'
 import { setUser, fetchInitialData } from 'actions'
 import SplashScreen from 'components/SplashScreen'
 
@@ -22,6 +24,7 @@ export default function App({ Component, pageProps }: AppProps) {
   // there are 2 loading variables to control the splashscreen transition
   const [loading, setLoading] = useState(true)
   const store = useStore(pageProps.initialReduxState)
+  const toast = useRef(null)
   const { dispatch } = store
 
   useEffect(() => {
@@ -53,10 +56,14 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <SplashScreen loading={loading} />
+          <ToastContext.Provider value={toast}>
+            <CssBaseline />
+            <SplashScreen loading={loading} />
 
-          {loading ? null : <Component {...pageProps} />}
+            {loading ? null : <Component {...pageProps} />}
+
+            <Toast ref={toast} />
+          </ToastContext.Provider>
         </ThemeProvider>
       </Provider>
     </>

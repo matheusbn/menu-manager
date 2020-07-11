@@ -17,7 +17,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import { makeStyles } from '@material-ui/core/styles'
 import useSetState from 'hooks/useSetState'
 import NavLayout from 'components/NavLayout'
-import CoverPictureUpload from 'components/CoverPictureUpload'
+import PictureInput from 'components/PictureInput'
 import TableCodesGenerator from 'components/TableCodesGenerator'
 import isEqual from 'lodash/isEqual'
 import { toBase64 } from 'helpers'
@@ -136,11 +136,11 @@ const Home = () => {
   return (
     <NavLayout>
       <section className={classes.root}>
-        <CoverPictureUpload
+        <PictureInput
           value={restaurantData.coverPicture}
           onChange={handleCoverChange}
           className={classes.cover}
-          editing={editing}
+          disabled={!editing}
         />
 
         <div className={classes.editButtonContainer}>

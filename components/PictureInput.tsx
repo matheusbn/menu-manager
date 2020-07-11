@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import React from 'react'
 import EditIcon from '@material-ui/icons/Edit'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
@@ -7,6 +6,7 @@ import clsx from 'clsx'
 const useStyles = makeStyles(theme => ({
   root: {
     '& img': {
+      display: 'block',
       width: '100%',
       height: '100%',
       objectFit: 'cover',
@@ -21,13 +21,13 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
 
     '&:hover': {
-      '& .cover-picture__overlay': {
-        opacity: (props: any) => props.editing && 1,
+      '& .picture-input__overlay': {
+        opacity: (props: any) => !props.disabled && 1,
       },
     },
 
-    '& .cover-picture__overlay': {
-      cursor: (props: any) => (props.editing ? 'pointer' : 'default'),
+    '& .picture-input__overlay': {
+      cursor: (props: any) => (props.disabled ? 'default' : 'pointer'),
       '& .MuiSvgIcon-root': {
         color: 'white',
         fontSize: '2rem',
@@ -46,20 +46,20 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-interface CoverPictureUploadProps {
+interface PictureInputProps {
   value: string
-  editing?: boolean
   className?: string
+  disabled?: boolean
   onChange: (file: File) => void
 }
 
-const CoverPictureUpload = ({
+const PictureInput = ({
   value,
   onChange,
-  editing = true,
+  disabled,
   className,
-}: CoverPictureUploadProps) => {
-  const classes = useStyles({ editing })
+}: PictureInputProps) => {
+  const classes = useStyles({ disabled })
 
   const handleUpload = e => {
     onChange(e.target.files[0])
@@ -67,24 +67,24 @@ const CoverPictureUpload = ({
 
   return (
     <div className={clsx(classes.root, className)}>
-      {editing && (
+      {!disabled && (
         <input
           accept="image/*"
-          id="cover-picture-input"
+          id="picture-input"
           type="file"
           className={classes.input}
           onChange={handleUpload}
         />
       )}
 
-      <label htmlFor="cover-picture-input" className={classes.label}>
-        <div className="cover-picture__overlay">
+      <label htmlFor="picture-input" className={classes.label}>
+        <div className="picture-input__overlay">
           <EditIcon color="inherit" />
         </div>
-        <img src={value} alt="Imagem de fundo do restaurante" />
+        <img src={value} alt="Imagem" />
       </label>
     </div>
   )
 }
 
-export default CoverPictureUpload
+export default PictureInput
