@@ -69,15 +69,6 @@ const ItemProfile = () => {
 
   const createHandler = field => e => setItemData({ [field]: e.target.value })
 
-  const createOptionalHandler = optionalName => newOptional => {
-    console.log(newOptional)
-    setItemData({
-      optionals: itemData.optionals.map(optional =>
-        optional.name === optionalName ? newOptional : optional
-      ),
-    })
-  }
-
   useEffect(() => {
     renderCounter.current += 1
   })
@@ -87,6 +78,12 @@ const ItemProfile = () => {
       setItemData(item.data)
     }
   }, [item])
+
+  const handleOptionalSubmit = i => optional => {
+    const newOptionals = item.data.optionals.slice()
+    newOptionals[i] = optional
+    dispatch(updateMenuItemData(item, { optionals: newOptionals }))
+  }
 
   const saveEdit = async () => {
     setLoadingSave(true)
@@ -169,8 +166,12 @@ const ItemProfile = () => {
           </Typography>
 
           <Paper elevation={8} style={{ padding: 0 }}>
-            {itemData.optionals.map(optional => (
-              <Optional optional={optional} key={optional.name} />
+            {itemData.optionals.map((optional, i) => (
+              <Optional
+                optional={optional}
+                onSubmit={handleOptionalSubmit(i)}
+                key={optional.name}
+              />
             ))}
           </Paper>
 

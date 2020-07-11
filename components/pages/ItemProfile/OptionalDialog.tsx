@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   IconButton,
   TextField,
@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@material-ui/core'
 import { Close as CloseIcon, Edit as EditIcon } from '@material-ui/icons'
+import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 import { TransitionProps } from '@material-ui/core/transitions'
 
@@ -23,7 +24,9 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(4),
     paddingRight: theme.spacing(4),
   },
-
+  inputRequired: {
+    minWidth: 70,
+  },
   title: {
     marginLeft: theme.spacing(2),
     flex: 1,
@@ -81,69 +84,73 @@ const Transition = React.forwardRef(function Transition(
 
 interface OptionalDialogProps {
   optional: Optional
-  onChange: (optional: Optional) => void
+  onSubmit: (optional: Optional) => void
   open: boolean
   onClose: () => void
 }
 
 const OptionalDialog = ({
   optional,
-  onChange,
+  onSubmit,
   open,
   onClose,
 }: OptionalDialogProps) => {
   const classes = useStyles()
+  const [name, setName] = useState(optional.name)
+  const [required, setRequired] = useState<{ min?: number; max?: number }>(
+    optional.required || {}
+  )
+  const [options, setOptions] = useState<Option[]>(optional.options)
 
-  const submit = () => {}
+  const submit = () => {
+    const newOptional = {
+      name,
+      required, // filter
+      options: options.filter(o => !!o.name),
+    }
 
-  const handleChange = (field, value) => {
-    onChange({
-      ...optional,
-      [field]: value,
-    })
+    onSubmit(newOptional)
+    onClose()
   }
 
-  const handleName = e => {
-    handleChange('name', e.target.value)
-  }
+  const handleName = e => setName(e.target.value)
+
   const handleMin = e => {
     const value = Number(e.target.value)
-    const newRequired = {
-      ...optional.required,
+    setRequired({
+      ...required,
       min: isNaN(value) || value < 1 ? undefined : value,
-    }
-    handleChange('required', newRequired)
+    })
   }
   const handleMax = e => {
     const value = Number(e.target.value)
-    const newRequired = {
-      ...optional.required,
+    setRequired({
+      ...required,
       max: isNaN(value) || value < 1 ? undefined : value,
-    }
-    console.log(value, newRequired)
-    handleChange('required', newRequired)
+    })
   }
 
   const addOption = () => {
-    const newOptions = [...optional.options, { name: '' }]
-    handleChange('options', newOptions)
+    const newOptions = [...options, { name: '' }]
+    setOptions(newOptions)
   }
   const removeOption = option => {
-    const newOptions = optional.options.filter(o => o !== option)
-    handleChange('options', newOptions)
+    const newOptions = options.filter(o => o !== option)
+    setOptions(newOptions)
   }
 
   const createOptionNameHandler = i => e => {
-    const newOptions = optional.options.slice()
+    const newOptions = options.slice()
     newOptions[i].name = e.target.value
-    handleChange('options', newOptions)
+    setOptions(newOptions)
   }
 
   const createOptionPriceHandler = i => e => {
-    const newOptions = optional.options.slice()
+    const newOptions = options.slice()
     const value = Number(e.target.value)
     newOptions[i].price = isNaN(value) ? newOptions[i].price : value
-    handleChange('options', newOptions)
+
+    setOptions(newOptions)
   }
 
   return (
@@ -153,7 +160,7 @@ const OptionalDialog = ({
       // TransitionComponent={Transition}
       className={classes.root}
     >
-      <DialogTitle id="max-width-dialog-title">{optional.name}</DialogTitle>
+      <DialogTitle>{name}</DialogTitle>
       <DialogContent className={classes.content}>
         <div className={classes.row}>
           <TextField
@@ -161,28 +168,28 @@ const OptionalDialog = ({
             fullWidth
             label="Nome"
             required
-            value={optional.name}
+            value={name}
             className={classes.input}
           />
           <div className={classes.required}>
             <TextField
               onChange={handleMin}
               label="Mínimo"
-              value={optional.required?.min}
+              value={required.min}
               type="number"
-              className={classes.input}
+              className={clsx(classes.input, classes.inputRequired)}
             />
             <TextField
               onChange={handleMax}
-              value={optional.required?.max}
+              value={required.max}
               label="Máximo"
               type="number"
-              className={classes.input}
+              className={clsx(classes.input, classes.inputRequired)}
             />
           </div>
         </div>
         <div className={classes.options}>
-          {optional.options.map((option, i) => (
+          {options.map((option, i) => (
             <div className={classes.row} key={i}>
               <div className={classes.outlineBox}>
                 <div />

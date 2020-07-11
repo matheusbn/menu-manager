@@ -6,9 +6,9 @@ interface Option {
 interface Optional {
   name: string
   options: Option[]
-  required?: {
-    min: number
-    max: number
+  required: {
+    min?: number
+    max?: number
   }
 }
 

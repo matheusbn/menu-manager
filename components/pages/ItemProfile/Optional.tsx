@@ -69,6 +69,10 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+/**
+ * Um opcional só é obrigatório quando min > 0
+ *
+ */
 const Observation = ({ requiredObj }) => {
   const { min, max } = requiredObj
 
@@ -83,14 +87,15 @@ const Observation = ({ requiredObj }) => {
 
 interface OptionalProps {
   optional: Optional
+  onSubmit: (Optional) => void
 }
 
-const Optional = ({ optional }: OptionalProps) => {
+const Optional = ({ optional, onSubmit }: OptionalProps) => {
   const classes = useStyles()
-  const [optionalDialogOpen, setOptionalDialogOpen] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
-  const openOptionalDialog = () => setOptionalDialogOpen(true)
-  const closeOptionalDialog = () => setOptionalDialogOpen(false)
+  const openDialog = () => setDialogOpen(true)
+  const closeDialog = () => setDialogOpen(false)
 
   return (
     <>
@@ -100,7 +105,7 @@ const Optional = ({ optional }: OptionalProps) => {
             <Typography className={classes.title} variant="body2">
               {optional.name}
             </Typography>
-            <IconButton onClick={openOptionalDialog}>
+            <IconButton onClick={openDialog}>
               <EditIcon color="inherit" />
             </IconButton>
           </div>
@@ -112,9 +117,9 @@ const Optional = ({ optional }: OptionalProps) => {
             )} */}
           </div>
         </div>
-        <div className={classes.options}>
-          {optional.options.map(option => (
-            <div className={clsx(classes.option, classes.row)}>
+        <div>
+          {optional.options.map((option, i) => (
+            <div className={clsx(classes.option, classes.row)} key={i}>
               <Typography variant="body1">{option.name}</Typography>
 
               {option.price && (
@@ -127,10 +132,10 @@ const Optional = ({ optional }: OptionalProps) => {
         </div>
       </div>
       <OptionalDialog
-        open={optionalDialogOpen}
+        open={dialogOpen}
         optional={optional}
-        onClose={closeOptionalDialog}
-        onChange={console.log}
+        onClose={closeDialog}
+        onSubmit={onSubmit}
       />
     </>
   )
