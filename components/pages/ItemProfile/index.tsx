@@ -80,6 +80,7 @@ const ItemProfile = () => {
   }, [item])
 
   const handleAddOptionalSubmit = optional => {
+    console.log(item)
     dispatch(
       updateMenuItemData(item, {
         optionals: [...item.data.optionals, optional],
@@ -93,8 +94,10 @@ const ItemProfile = () => {
     dispatch(updateMenuItemData(item, { optionals: newOptionals }))
   }
 
-  const handleOptionalDelete = i => {
-    const newOptionals = item.data.optionals.slice().splice(i, 1)
+  const handleOptionalDelete = optionalIndex => {
+    const newOptionals = item.data.optionals.filter(
+      (_, i) => i !== optionalIndex
+    )
     dispatch(updateMenuItemData(item, { optionals: newOptionals }))
   }
 
@@ -208,7 +211,7 @@ const ItemProfile = () => {
 
       <OptionalDialog
         open={dialogOpen}
-        optional={{ name: '', options: [] }}
+        optional={{ name: '', options: [], required: {} }}
         onClose={closeDialog}
         onSubmit={handleAddOptionalSubmit}
       />

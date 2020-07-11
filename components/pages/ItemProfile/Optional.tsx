@@ -2,13 +2,10 @@ import React, { useState } from 'react'
 import { IconButton, Typography } from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
-import MenuItem from 'models/MenuItem'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 import { formatMoney } from 'helpers'
 import OptionalDialog from './OptionalDialog'
-import useSetState from 'hooks/useSetState'
-import OptionalInput from './OptionalInput'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -102,6 +99,7 @@ const Optional = ({ optional, onSubmit, onDelete }: OptionalProps) => {
           <div className={classes.titleAndObservation}>
             <Typography
               variant="body2"
+              component="div"
               className={clsx(classes.title, classes.row)}
             >
               {optional.name}

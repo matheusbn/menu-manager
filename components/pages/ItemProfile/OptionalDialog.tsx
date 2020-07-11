@@ -163,7 +163,7 @@ const OptionalDialog = ({
     <Dialog
       open={open}
       onClose={onClose}
-      // TransitionComponent={Transition}
+      TransitionComponent={Transition}
       className={classes.root}
     >
       <DialogTitle>{isUpdate ? 'Atualizar' : 'Novo'} Opcional</DialogTitle>
