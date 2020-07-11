@@ -20,6 +20,23 @@ class Restaurant {
     this.data = this.snapshot.data()
   }
 
+  async addEmptyMenuItem(): Promise<MenuItem> {
+    const emptyItem: MenuItem = {
+      ref: null,
+      data: {
+        name: '',
+        description: '',
+        section: '',
+        optionals: [],
+        pictures: [],
+      },
+    }
+    const ref = await this.snapshot.ref.collection('items').add(emptyItem.data)
+
+    emptyItem.ref = ref
+    return emptyItem
+  }
+
   async update(...args) {
     return this.snapshot.ref.update(...args)
   }

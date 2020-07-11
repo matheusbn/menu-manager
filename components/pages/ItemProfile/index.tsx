@@ -13,7 +13,6 @@ import {
   Typography,
 } from '@material-ui/core'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
-import MenuItem from 'models/MenuItem'
 import { makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
 import PictureInput from 'components/PictureInput'
@@ -81,8 +80,11 @@ const ItemProfile = () => {
   const createHandler = field => e => setItemData({ [field]: e.target.value })
 
   useEffect(() => {
+    window.scroll(0, 0)
+  }, [])
+  useEffect(() => {
     if (item) {
-      setItemData(item.data)
+      setItemData(item.data || {})
     }
   }, [item])
 
@@ -141,7 +143,7 @@ const ItemProfile = () => {
       <section className={classes.root}>
         <div className={classes.topSection}>
           <PictureInput
-            value={itemData.pictures[0]}
+            value={itemData.pictures?.[0] || '/assets/picture-placeholder.png'}
             onChange={handlePictureChange}
             className={classes.pictures}
           />

@@ -1,12 +1,18 @@
-import MenuItem from 'models/MenuItem'
 import { upload } from 'services/firebaseStorage'
 
-export const setMenuItems = (menuItems: {
-  ref: firebase.firestore.DocumentReference
-  data: object
-}) => ({
+export const setMenuItems = (menuItems: MenuItem) => ({
   type: 'SET_MENU_ITEMS',
   menuItems,
+})
+
+export const addMenuItem = (menuItem: MenuItem) => ({
+  type: 'ADD_MENU_ITEM',
+  menuItem,
+})
+
+export const deleteMenuItem = (menuItem: MenuItem) => ({
+  type: 'DELETE_MENU_ITEM',
+  menuItem,
 })
 
 export const updateMenuItemData = (

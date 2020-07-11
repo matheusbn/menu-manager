@@ -12,14 +12,16 @@ interface Optional {
   }
 }
 
-interface Item {
-  id: string
-  name: string
-  description: string
-  price: number
-  pictures: string[]
-  section: string
-  optionals: Optional[]
+interface MenuItem {
+  ref: firebase.firestore.DocumentReference | null
+  data: {
+    name: string
+    description: string
+    price?: number
+    pictures: string[]
+    section: string
+    optionals: Optional[]
+  }
 }
 
 interface SelectedOptionals {

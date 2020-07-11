@@ -1,5 +1,4 @@
 import Restaurant from 'models/Restaurant'
-import MenuItem from 'models/MenuItem'
 export * from './user'
 export * from './restaurant'
 export * from './menuItems'

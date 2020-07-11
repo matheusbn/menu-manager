@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Router from 'next/router'
-import { Typography, Fab } from '@material-ui/core'
+import { Typography, Fab, CircularProgress } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import { withStyles, makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
 import Item from './Item'
-import MenuItem from 'models/MenuItem'
+import { addMenuItem } from 'actions'
 import capitalize from 'lodash/capitalize'
 // import Item from 'components/Item'
 
@@ -61,11 +61,23 @@ const getOrganizedSections = items => {
 
 function Menu() {
   const classes = useStyles()
+  const dispatch = useDispatch()
+  const restaurant = useSelector(state => state.restaurant)
   const menuItems = useSelector(state => state.menuItems)
-  const [loading, setLoading] = useState(false)
-  const [email, setEmail] = useState('')
+  const [loadingAdd, setLoadingAdd] = useState(false)
 
   const menuSections = getOrganizedSections(menuItems)
+
+  const addItem = async () => {
+    setLoadingAdd(true)
+
+    const emptyMenuItem = await restaurant.addEmptyMenuItem()
+    dispatch(addMenuItem(emptyMenuItem))
+
+    Router.push(`/cardapio/[itemId]`, `/cardapio/${emptyMenuItem.ref.id}`)
+
+    setLoadingAdd(false)
+  }
 
   return (
     <NavLayout>
@@ -91,8 +103,17 @@ function Menu() {
           </div>
         ))}
 
-        <Fab color="primary" aria-label="add" className={classes.addButton}>
-          <AddIcon color="inherit" />
+        <Fab
+          color="primary"
+          aria-label="add"
+          className={classes.addButton}
+          onClick={addItem}
+        >
+          {loadingAdd ? (
+            <CircularProgress color="inherit" size={30} />
+          ) : (
+            <AddIcon color="inherit" />
+          )}
         </Fab>
       </section>
     </NavLayout>
