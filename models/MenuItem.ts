@@ -3,7 +3,7 @@ import 'firebase/storage'
 import 'firebase/firestore'
 
 class MenuItem {
-  private snapshot
+  snapshot
   data
 
   constructor(snapshot) {

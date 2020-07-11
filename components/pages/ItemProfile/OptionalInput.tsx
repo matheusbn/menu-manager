@@ -62,84 +62,85 @@ interface Props {
   onChange: (optional: Optional) => void
 }
 
+interface OptionWithKey extends Option {
+  key?: number
+}
+
 const OptionalInput = ({ optional, onChange }: Props) => {
   const classes = useStyles()
-  const [name, setName] = useState(optional.name)
-  const [required, setRequired] = useState<
-    { min: number; max: number } | undefined
-  >(optional.required)
-  const [options, setOptions] = useState<Option[]>(optional.options)
 
-  useEffect(() => {
+  const handleChange = (field, value) => {
     onChange({
-      name,
-      required,
-      options,
+      ...optional,
+      [field]: value,
     })
-  }, [name, required, options])
+  }
 
-  const addOption = () => setOptions(prev => [...prev, { name: '' }])
+  const handleName = e => {
+    handleChange('name', e.target.value)
+  }
+  const handleMin = e => {
+    const value = Number(e.target.value)
+    const newRequired = {
+      ...optional.required,
+      min: isNaN(value) || value < 1 ? undefined : value,
+    }
+    handleChange('required', newRequired)
+  }
+  const handleMax = e => {
+    const value = Number(e.target.value)
+    const newRequired = {
+      ...optional.required,
+      max: isNaN(value) || value < 1 ? undefined : value,
+    }
+    console.log(value, newRequired)
+    handleChange('required', newRequired)
+  }
+
+  const addOption = () => {
+    const newOptions = [...optional.options, { name: '' }]
+    handleChange('options', newOptions)
+  }
   const removeOption = option => {
-    setOptions(prev => prev.filter(o => o !== option))
+    const newOptions = optional.options.filter(o => o !== option)
+    handleChange('options', newOptions)
   }
 
-  const handleMin = e =>
-    setRequired(prev => ({
-      max: prev?.max || 0,
-      min: parseInt(e.target.value, 10),
-    }))
-  const handleMax = e =>
-    setRequired(prev => ({
-      min: prev?.min || 0,
-      max: parseInt(e.target.value, 10),
-    }))
-
-  const createOptionNameHandler = option => e => {
-    setOptions(
-      options.map(opt => {
-        if (opt !== option) return opt
-        return {
-          ...opt,
-          name: e.target.value,
-        }
-      })
-    )
+  const createOptionNameHandler = i => e => {
+    const newOptions = optional.options.slice()
+    newOptions[i].name = e.target.value
+    handleChange('options', newOptions)
   }
 
-  const createOptionPriceHandler = option => e => {
-    setOptions(
-      options.map(opt => {
-        if (opt !== option) return opt
-        return {
-          ...opt,
-          price: Number(e.target.value),
-        }
-      })
-    )
+  const createOptionPriceHandler = i => e => {
+    const newOptions = optional.options.slice()
+    const value = Number(e.target.value)
+    newOptions[i].price = isNaN(value) ? newOptions[i].price : value
+    handleChange('options', newOptions)
   }
 
   return (
     <Paper elevation={8} className={classes.root}>
       <div className={classes.row}>
         <TextField
-          onChange={e => setName(e.target.value)}
+          onChange={handleName}
           fullWidth
           label="Nome"
           required
-          value={name}
+          value={optional.name}
           className={classes.input}
         />
         <div className={classes.required}>
           <TextField
             onChange={handleMin}
             label="Mínimo"
-            value={required?.min}
+            value={optional.required?.min}
             type="number"
             className={classes.input}
           />
           <TextField
             onChange={handleMax}
-            value={required?.max}
+            value={optional.required?.max}
             label="Máximo"
             type="number"
             className={classes.input}
@@ -148,22 +149,22 @@ const OptionalInput = ({ optional, onChange }: Props) => {
       </div>
 
       <div className={classes.options}>
-        {options.map(option => (
-          <div className={classes.row} key={keyGen()}>
+        {optional.options.map((option, i) => (
+          <div className={classes.row} key={i}>
             <div className={classes.outlineBox}>
               <div />
             </div>
             <div className={classes.option}>
               <TextField
                 fullWidth
-                onChange={createOptionNameHandler(option)}
+                onChange={createOptionNameHandler(i)}
                 label="Nome"
                 value={option.name}
                 required
                 className={classes.input}
               />
               <TextField
-                onChange={createOptionPriceHandler(option)}
+                onChange={createOptionPriceHandler(i)}
                 value={option.price}
                 label="Preço"
                 type="number"

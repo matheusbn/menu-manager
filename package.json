@@ -2,7 +2,7 @@
   "name": "manager-interface",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next",
+    "dev": "next -p 3040",
     "build": "next build",
     "start": "next start"
   },

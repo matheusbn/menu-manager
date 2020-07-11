@@ -34,9 +34,9 @@ const menuItems = (state: MenuItem[] = [], action) => {
   switch (action.type) {
     case `SET_MENU_ITEMS`:
       return action.menuItems
-    case `UPDATE_MENU_ITEM`:
+    case `UPDATE_MENU_ITEM_DATA`:
       return state.map(item => {
-        if (!item.id !== action.menuItem) return item
+        if (item.id !== action.menuItem.id) return item
 
         return {
           ...item,

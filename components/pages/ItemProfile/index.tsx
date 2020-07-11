@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useSelector, useDispatch } from 'react-redux'
+import { useStore, useSelector, useDispatch } from 'react-redux'
 import { updateMenuItemData } from 'actions'
 import {
   Tooltip,
@@ -9,12 +9,12 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core'
+import MenuItem from 'models/MenuItem'
 import { makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
 import useSetState from 'hooks/useSetState'
 import OptionalInput from './OptionalInput'
-import firebase from 'firebase/app'
-import 'firebase/firestore'
+import remove from 'lodash/remove'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,9 +51,6 @@ const useStyles = makeStyles(theme => ({
     ...theme.flex.center,
     height: 60,
     marginTop: theme.spacing(2),
-    // '& > button': {
-    //   display: (props: any) => (props.editing ? 'flex' : 'none'),
-    // },
   },
 }))
 
@@ -61,9 +58,11 @@ const ItemProfile = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const router = useRouter()
-  const menuItems = useSelector(state => state.menuItems)
+  const renderCounter = useRef(0)
+  const item: MenuItem = useSelector(state =>
+    state.menuItems.find(i => i.snapshot.id === router.query.itemId)
+  )
   const [loadingSave, setLoadingSave] = useState(false)
-  const item = menuItems.find(i => i.id === router.query.itemId)
   const [itemData, setItemData] = useSetState(null)
 
   const createHandler = field => e => setItemData({ [field]: e.target.value })
@@ -78,19 +77,30 @@ const ItemProfile = () => {
   }
 
   useEffect(() => {
-    if (item) setItemData(item.data)
+    renderCounter.current += 1
+  })
+  useEffect(() => {
+    if (item) {
+      console.log('setItemData')
+      setItemData(item.data)
+    }
   }, [item])
 
   const saveEdit = async () => {
     setLoadingSave(true)
+    // remove empty options
 
-    // console.log(itemData)
-    dispatch(updateMenuItemData(item, itemData))
+    const newItemData = { ...itemData }
+    newItemData.optionals.forEach(optional => {
+      remove(optional.options, o => !o.name && !o.price)
+    })
+    dispatch(updateMenuItemData(item, newItemData))
 
     setLoadingSave(false)
   }
 
   const cancelEdit = () => {
+    console.log(itemData)
     // if (isEqual({ ...restaurant.data }, { ...restaurantData }))
     //   return setEditing(false)
     // setWarningOpen(true)
@@ -117,7 +127,7 @@ const ItemProfile = () => {
               style={{ marginRight: 30 }}
               fullWidth
               label="Nome"
-              value={item.data.name}
+              value={itemData.name}
               className={classes.input}
             />
 
@@ -155,10 +165,12 @@ const ItemProfile = () => {
           <Typography gutterBottom variant="body1">
             Opcionais
           </Typography>
+
           <OptionalInput
             optional={itemData.optionals[0]}
             onChange={createOptionalHandler(itemData.optionals[0].name)}
           />
+
           {/* {item.optionals.map(optional => (
             <OptionalInput
               key={optional.name}

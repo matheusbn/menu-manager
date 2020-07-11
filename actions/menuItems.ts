@@ -12,6 +12,7 @@ export const updateMenuItemData = (menuItem: MenuItem, data) => dispatch => {
 
   dispatch({
     type: 'UPDATE_MENU_ITEM_DATA',
+    menuItem,
     data,
   })
 }
