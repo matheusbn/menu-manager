@@ -1,22 +1,14 @@
-import React, { useRef, useState, useEffect } from 'react'
-import {
-  Tooltip,
-  IconButton,
-  Button,
-  CircularProgress,
-  TextField,
-  Typography,
-} from '@material-ui/core'
+import React, { useState } from 'react'
+import { IconButton, Typography } from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
+import DeleteIcon from '@material-ui/icons/Delete'
 import MenuItem from 'models/MenuItem'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 import { formatMoney } from 'helpers'
-import NavLayout from 'components/NavLayout'
 import OptionalDialog from './OptionalDialog'
 import useSetState from 'hooks/useSetState'
 import OptionalInput from './OptionalInput'
-import remove from 'lodash/remove'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,14 +32,19 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  titleAndObservation: {
+    padding: theme.spacing(1),
+  },
   title: {
     fontWeight: theme.typography.fontWeightMedium,
     color: theme.palette.grey['700'],
-    padding: theme.spacing(2),
   },
-  titleContainer: {
+  titleSection: {
+    display: 'grid',
+    gridTemplateColumns: '1fr auto',
+    gridGap: 20,
+    padding: theme.spacing(1),
     width: '100%',
-    height: 60,
     // display: 'flex',
     // alignItems: 'center',
     backgroundColor: theme.palette.grey[200],
@@ -79,18 +76,19 @@ const Observation = ({ requiredObj }) => {
   if ((!min && !max) || max === 1) return <div />
 
   let text
-  if (max > 1) text = `Escolha até ${max} opções`
-  else text = `Escolha no mínimo ${min} ${min > 1 ? 'opções' : 'opção'}`
+  if (max > 1) text = `Até ${max} opções`
+  else text = `No mínimo ${min} ${min > 1 ? 'opções' : 'opção'}`
 
   return <Typography variant="caption">{text}</Typography>
 }
 
 interface OptionalProps {
   optional: Optional
+  onDelete: () => void
   onSubmit: (Optional) => void
 }
 
-const Optional = ({ optional, onSubmit }: OptionalProps) => {
+const Optional = ({ optional, onSubmit, onDelete }: OptionalProps) => {
   const classes = useStyles()
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -100,21 +98,26 @@ const Optional = ({ optional, onSubmit }: OptionalProps) => {
   return (
     <>
       <div className={classes.root}>
-        <div className={classes.titleContainer}>
-          <div className={classes.row}>
-            <Typography className={classes.title} variant="body2">
+        <div className={classes.titleSection}>
+          <div className={classes.titleAndObservation}>
+            <Typography
+              variant="body2"
+              className={clsx(classes.title, classes.row)}
+            >
               {optional.name}
+              {optional?.required?.min && (
+                <div className={classes.requiredBadge}>Obrigatório</div>
+              )}
             </Typography>
+            <Observation requiredObj={optional.required} />
+          </div>
+          <div>
             <IconButton onClick={openDialog}>
               <EditIcon color="inherit" />
             </IconButton>
-          </div>
-          <div className={classes.row}>
-            <Observation requiredObj={optional.required} />
-
-            {/* {optional?.required?.min && (
-              <div className={classes.requiredBadge}>Obrigatório</div>
-            )} */}
+            <IconButton onClick={onDelete}>
+              <DeleteIcon color="inherit" />
+            </IconButton>
           </div>
         </div>
         <div>
@@ -132,6 +135,7 @@ const Optional = ({ optional, onSubmit }: OptionalProps) => {
         </div>
       </div>
       <OptionalDialog
+        isUpdate
         open={dialogOpen}
         optional={optional}
         onClose={closeDialog}

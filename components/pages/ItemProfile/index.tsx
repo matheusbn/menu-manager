@@ -6,17 +6,18 @@ import {
   Tooltip,
   Paper,
   Button,
+  IconButton,
   CircularProgress,
   TextField,
   Typography,
 } from '@material-ui/core'
-import EditIcon from '@material-ui/icons/Edit'
+import AddCircleIcon from '@material-ui/icons/AddCircle'
 import MenuItem from 'models/MenuItem'
 import { makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
 import Optional from './Optional'
+import OptionalDialog from './OptionalDialog'
 import useSetState from 'hooks/useSetState'
-import remove from 'lodash/remove'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,24 +61,31 @@ const ItemProfile = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const router = useRouter()
-  const renderCounter = useRef(0)
   const item: MenuItem = useSelector(state =>
     state.menuItems.find(i => i.snapshot.id === router.query.itemId)
   )
   const [loadingSave, setLoadingSave] = useState(false)
   const [itemData, setItemData] = useSetState(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  const openDialog = () => setDialogOpen(true)
+  const closeDialog = () => setDialogOpen(false)
 
   const createHandler = field => e => setItemData({ [field]: e.target.value })
 
   useEffect(() => {
-    renderCounter.current += 1
-  })
-  useEffect(() => {
     if (item) {
-      console.log('setItemData')
       setItemData(item.data)
     }
   }, [item])
+
+  const handleAddOptionalSubmit = optional => {
+    dispatch(
+      updateMenuItemData(item, {
+        optionals: [...item.data.optionals, optional],
+      })
+    )
+  }
 
   const handleOptionalSubmit = i => optional => {
     const newOptionals = item.data.optionals.slice()
@@ -85,15 +93,15 @@ const ItemProfile = () => {
     dispatch(updateMenuItemData(item, { optionals: newOptionals }))
   }
 
+  const handleOptionalDelete = i => {
+    const newOptionals = item.data.optionals.slice().splice(i, 1)
+    dispatch(updateMenuItemData(item, { optionals: newOptionals }))
+  }
+
   const saveEdit = async () => {
     setLoadingSave(true)
-    // remove empty options
 
-    const newItemData = { ...itemData }
-    newItemData.optionals.forEach(optional => {
-      remove(optional.options, o => !o.name && !o.price)
-    })
-    dispatch(updateMenuItemData(item, newItemData))
+    dispatch(updateMenuItemData(item, itemData))
 
     setLoadingSave(false)
   }
@@ -122,6 +130,7 @@ const ItemProfile = () => {
           />
           <div>
             <TextField
+              variant="filled"
               onChange={createHandler('name')}
               style={{ marginRight: 30 }}
               fullWidth
@@ -131,6 +140,7 @@ const ItemProfile = () => {
             />
 
             <TextField
+              variant="filled"
               onChange={createHandler('price')}
               fullWidth
               label="Preço"
@@ -141,6 +151,7 @@ const ItemProfile = () => {
 
             <Tooltip title="Este valor é o que definirá a divisão das seções no aplicativo">
               <TextField
+                variant="filled"
                 onChange={createHandler('section')}
                 fullWidth
                 label="Seção"
@@ -150,6 +161,7 @@ const ItemProfile = () => {
             </Tooltip>
 
             <TextField
+              variant="filled"
               onChange={createHandler('description')}
               fullWidth
               multiline
@@ -163,30 +175,21 @@ const ItemProfile = () => {
         <div className={classes.optionals}>
           <Typography gutterBottom variant="body1">
             Opcionais
+            <IconButton onClick={openDialog}>
+              <AddCircleIcon color="inherit" />
+            </IconButton>
           </Typography>
 
           <Paper elevation={8} style={{ padding: 0 }}>
             {itemData.optionals.map((optional, i) => (
               <Optional
                 optional={optional}
+                onDelete={() => handleOptionalDelete(i)}
                 onSubmit={handleOptionalSubmit(i)}
                 key={optional.name}
               />
             ))}
           </Paper>
-
-          {/* <OptionalInput
-            optional={itemData.optionals[0]}
-            onChange={createOptionalHandler(itemData.optionals[0].name)}
-          /> */}
-
-          {/* {item.optionals.map(optional => (
-            <OptionalInput
-              key={optional.name}
-              value={optional}
-              onChange={console.log}
-            />
-          ))} */}
         </div>
 
         <div className={classes.editControlButtons}>
@@ -202,6 +205,13 @@ const ItemProfile = () => {
           <Button onClick={cancelEdit}>Cancelar</Button>
         </div>
       </section>
+
+      <OptionalDialog
+        open={dialogOpen}
+        optional={{ name: '', options: [] }}
+        onClose={closeDialog}
+        onSubmit={handleAddOptionalSubmit}
+      />
     </NavLayout>
   )
 }

@@ -39,6 +39,10 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
     marginBottom: theme.spacing(2),
   },
+  optionsTitle: {
+    paddingLeft: theme.spacing(1),
+    paddingBottom: theme.spacing(2),
+  },
   options: {
     marginLeft: theme.spacing(4),
   },
@@ -79,10 +83,11 @@ const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children?: React.ReactElement<any, any> },
   ref: React.Ref<unknown>
 ) {
-  return <Slide direction="up" ref={ref} {...props} />
+  return <Slide unmountOnExit direction="up" ref={ref} {...props} />
 })
 
 interface OptionalDialogProps {
+  isUpdate: boolean
   optional: Optional
   onSubmit: (optional: Optional) => void
   open: boolean
@@ -90,17 +95,18 @@ interface OptionalDialogProps {
 }
 
 const OptionalDialog = ({
+  isUpdate,
   optional,
   onSubmit,
   open,
   onClose,
 }: OptionalDialogProps) => {
   const classes = useStyles()
-  const [name, setName] = useState(optional.name)
+  const [name, setName] = useState(optional.name || '')
   const [required, setRequired] = useState<{ min?: number; max?: number }>(
     optional.required || {}
   )
-  const [options, setOptions] = useState<Option[]>(optional.options)
+  const [options, setOptions] = useState<Option[]>(optional.options || [])
 
   const submit = () => {
     const newOptional = {
@@ -160,7 +166,7 @@ const OptionalDialog = ({
       // TransitionComponent={Transition}
       className={classes.root}
     >
-      <DialogTitle>{name}</DialogTitle>
+      <DialogTitle>{isUpdate ? 'Atualizar' : 'Novo'} Opcional</DialogTitle>
       <DialogContent className={classes.content}>
         <div className={classes.row}>
           <TextField
@@ -188,6 +194,7 @@ const OptionalDialog = ({
             />
           </div>
         </div>
+        <Typography className={classes.optionsTitle}>Opções</Typography>
         <div className={classes.options}>
           {options.map((option, i) => (
             <div className={classes.row} key={i}>
@@ -227,10 +234,10 @@ const OptionalDialog = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={submit} color="primary">
-          Atualizar
+          {isUpdate ? 'Atualizar' : 'Confirmar'}
         </Button>
         <Button onClick={onClose} color="primary">
-          Close
+          Cancelar
         </Button>
       </DialogActions>
     </Dialog>
