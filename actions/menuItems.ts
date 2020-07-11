@@ -10,10 +10,14 @@ export const addMenuItem = (menuItem: MenuItem) => ({
   menuItem,
 })
 
-export const deleteMenuItem = (menuItem: MenuItem) => ({
-  type: 'DELETE_MENU_ITEM',
-  menuItem,
-})
+export const deleteMenuItem = (menuItem: MenuItem) => async dispatch => {
+  await menuItem.ref?.delete()
+
+  dispatch({
+    type: 'DELETE_MENU_ITEM',
+    menuItem,
+  })
+}
 
 export const updateMenuItemData = (
   ref: firebase.firestore.DocumentReference,

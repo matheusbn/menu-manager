@@ -37,9 +37,11 @@ const menuItems = (state: MenuItem[] = [], action) => {
       return action.menuItems
     case `ADD_MENU_ITEM`:
       return [...state, action.menuItem]
+    case `DELETE_MENU_ITEM`:
+      return state.filter(item => item.ref?.id !== action.menuItem.ref.id)
     case `UPDATE_MENU_ITEM_DATA`:
       return state.map(item => {
-        if (item.ref.id !== action.ref.id) return item
+        if (item.ref?.id !== action.ref.id) return item
 
         return {
           ...item,

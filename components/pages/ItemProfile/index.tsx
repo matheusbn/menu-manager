@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useStore, useSelector, useDispatch } from 'react-redux'
-import { updateMenuItemData } from 'actions'
+import { updateMenuItemData, deleteMenuItem } from 'actions'
 import useToast from 'hooks/useToast'
 import {
   Tooltip,
@@ -12,6 +12,7 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import { makeStyles } from '@material-ui/core/styles'
 import NavLayout from 'components/NavLayout'
@@ -25,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     minHeight: '100vh',
     padding: theme.spacing(4),
-    paddingTop: theme.spacing(6),
+    paddingTop: theme.spacing(0),
   },
   centered: {
     minHeight: '100vh',
@@ -58,6 +59,19 @@ const useStyles = makeStyles(theme => ({
     ...theme.flex.center,
     height: 60,
     marginTop: theme.spacing(2),
+  },
+  heading: {
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+    '& .MuiTypography-root': {
+      flexGrow: 1,
+      textAlign: 'center',
+    },
+    '& .MuiButtonBase-root': {
+      flexGrow: 0,
+    },
   },
 }))
 
@@ -132,6 +146,11 @@ const ItemProfile = () => {
     // setWarningOpen(true)
   }
 
+  const deleteItem = () => {
+    dispatch(deleteMenuItem(item))
+    router.push('/cardapio')
+  }
+
   if (!itemData)
     return (
       <NavLayout className={classes.centered}>
@@ -141,6 +160,21 @@ const ItemProfile = () => {
   return (
     <NavLayout>
       <section className={classes.root}>
+        <div className={classes.heading}>
+          <Typography variant="h6" component="p">
+            {item.data.name}
+          </Typography>
+
+          <div>
+            {/* <IconButton onClick={openDialog}>
+              <EditIcon color="inherit" />
+            </IconButton> */}
+            <IconButton onClick={deleteItem}>
+              <DeleteIcon color="inherit" />
+            </IconButton>
+          </div>
+        </div>
+
         <div className={classes.topSection}>
           <PictureInput
             value={itemData.pictures?.[0] || '/assets/picture-placeholder.png'}
