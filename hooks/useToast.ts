@@ -1,7 +1,6 @@
 import { useContext } from 'react'
 import ToastContext from 'contexts/toast'
 import { SnackbarProps } from '@material-ui/core'
-// import Toast from 'components/Toast'
 
 export default () => {
   const toastRef = useContext<any>(ToastContext)

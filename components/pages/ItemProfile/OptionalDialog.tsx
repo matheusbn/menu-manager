@@ -157,7 +157,7 @@ const OptionalDialog = ({
   const createOptionPriceHandler = i => e => {
     const newOptions = options.slice()
     const value = Number(e.target.value)
-    ;(newOptions[i].price = isNaN(value) || value < 1 ? null : value),
+    ;(newOptions[i].price = isNaN(value) || value < 1 ? undefined : value),
       setOptions(newOptions)
   }
 
