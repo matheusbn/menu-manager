@@ -25,8 +25,10 @@ import useSetState from 'hooks/useSetState'
 const useStyles = makeStyles(theme => ({
   root: {
     minHeight: '100vh',
+    maxWidth: 1000,
+    margin: '0 auto',
     padding: theme.spacing(4),
-    paddingTop: theme.spacing(0),
+    paddingTop: 0,
   },
   centered: {
     minHeight: '100vh',
@@ -35,9 +37,18 @@ const useStyles = makeStyles(theme => ({
   topSection: {
     display: 'flex',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
   },
   pictures: {
-    width: '45%',
+    minWidth: 420,
+    width: '60%',
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      marginBottom: theme.spacing(4),
+      marginRight: 0,
+    },
     flex: 'none',
     borderRadius: 4,
     overflow: 'hidden',
