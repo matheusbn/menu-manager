@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Router from 'next/router'
+import RestaurantService from 'services/restaurant'
 import { Typography, Fab, CircularProgress } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import { withStyles, makeStyles } from '@material-ui/core/styles'
@@ -71,10 +72,11 @@ function Menu() {
   const addItem = async () => {
     setLoadingAdd(true)
 
-    const emptyMenuItem = await restaurant.addEmptyMenuItem()
-    dispatch(addMenuItem(emptyMenuItem))
+    const restaurantService = new RestaurantService(restaurant.ref)
+    const emptyMenuItem = await restaurantService.addEmptyMenuItem()
 
-    Router.push(`/cardapio/[itemId]`, `/cardapio/${emptyMenuItem.ref.id}`)
+    Router.push(`/cardapio/[itemId]`, `/cardapio/${emptyMenuItem.ref!.id}`)
+    dispatch(addMenuItem(emptyMenuItem))
 
     setLoadingAdd(false)
   }

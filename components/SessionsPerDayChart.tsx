@@ -3,6 +3,7 @@ import { useTheme } from '@material-ui/core/styles'
 import Chart from 'components/Chart'
 import { useSelector } from 'react-redux'
 import { ChartDataSets } from 'chart.js'
+import RestaurantService from 'services/restaurant'
 
 const ClientPerDayChart = () => {
   const theme = useTheme()
@@ -22,7 +23,9 @@ const ClientPerDayChart = () => {
   async function getSessionsPerDay() {
     if (!restaurant) return
 
-    const perDay = await restaurant.avgSessionsPerDay()
+    const restaurantService = new RestaurantService(restaurant.ref)
+
+    const perDay = await restaurantService.avgSessionsPerDay()
 
     // removes the "-feira" from each weekday name
     const normalizedWeekdays = Object.entries(perDay).reduce(

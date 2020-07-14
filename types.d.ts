@@ -44,11 +44,20 @@ interface Order {
   orderedAt?: Date
 }
 
+interface Restaurant {
+  ref: firebase.firestore.DocumentReference
+  data: RestaurantData
+}
+
 interface RestaurantData {
+  name: string
   name: string
   coverPicture: string
   foodType: string
   maxCapacity: number
+  tableCodeMap: {
+    [code: string]: string
+  }
   address: {
     city: string
     state: string

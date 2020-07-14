@@ -19,6 +19,7 @@ import useSetState from 'hooks/useSetState'
 import NavLayout from 'components/NavLayout'
 import PictureInput from 'components/PictureInput'
 import TableCodesGenerator from 'components/TableCodesGenerator'
+import useToast from 'hooks/useToast'
 import isEqual from 'lodash/isEqual'
 import { toBase64 } from 'helpers'
 
@@ -80,6 +81,7 @@ const Home = () => {
   const [loadingSave, setLoadingSave] = useState(false)
   const [editing, setEditing] = useState(false)
   const [warningOpen, setWarningOpen] = useState(false)
+  const showToast = useToast()
   const dispatch = useDispatch()
   const classes = useStyles({ editing })
   const restaurant = useSelector(state => state.restaurant)
@@ -93,11 +95,12 @@ const Home = () => {
 
   const saveEdit = async () => {
     setLoadingSave(true)
-    await dispatch(
-      updateRestaurant({ ...restaurantData, coverPicture: coverFile })
-    )
+    const data = { ...restaurantData }
+    if (coverFile) data.coverPicture = coverFile
+    await dispatch(updateRestaurant(data))
     setEditing(false)
     setLoadingSave(false)
+    showToast('Informações atualizadas com sucesso!')
   }
 
   const cancelEdit = () => {
@@ -137,7 +140,7 @@ const Home = () => {
     <NavLayout>
       <section className={classes.root}>
         <PictureInput
-          value={restaurantData.coverPicture}
+          value={restaurantData.coverPicture || '/assets/cover-placeholder.png'}
           onChange={handleCoverChange}
           className={classes.cover}
           disabled={!editing}

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Router from 'next/router'
+import { useDispatch } from 'react-redux'
+import { signout } from 'actions'
 import {
   Hidden,
   Drawer,
@@ -72,11 +74,15 @@ const useStyles = makeStyles(theme => ({
 
 const NavBar = () => {
   const classes = useStyles()
+  const dispatch = useDispatch()
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const handleDrawerToggle = () => setMobileOpen(prev => !prev)
 
-  const signOut = () => firebase.auth().signOut()
+  const signOut = () => {
+    firebase.auth().signOut()
+    dispatch(signout())
+  }
 
   const drawer = (
     <div className={classes.drawerRoot}>

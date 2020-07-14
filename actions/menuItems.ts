@@ -26,12 +26,10 @@ export const updateMenuItemData = (
   const { restaurant } = getState()
   const file = data.pictures?.[0]
 
-  console.log(1, file)
   if (file instanceof File) {
-    console.log(2)
     const extension = file.name.split('.').pop()
     const url = await upload(
-      `${restaurant.snapshot.id}/${ref.id}/picture.${extension}`,
+      `${restaurant.ref.id}/${ref.id}/picture.${extension}`,
       file
     )
 

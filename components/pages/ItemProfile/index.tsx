@@ -157,8 +157,8 @@ const ItemProfile = () => {
     // setWarningOpen(true)
   }
 
-  const deleteItem = () => {
-    dispatch(deleteMenuItem(item))
+  const deleteItem = async () => {
+    await dispatch(deleteMenuItem(item))
     router.push('/cardapio')
   }
 

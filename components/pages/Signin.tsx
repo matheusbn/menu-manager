@@ -43,11 +43,6 @@ const Signin = () => {
   })
   const [password, setPassword] = useState('')
 
-  const signOut = () => {
-    // TODO: remove this
-    firebase.auth().signOut()
-  }
-
   const handleSignin = () => {
     setLoading(true)
 
@@ -72,7 +67,7 @@ const Signin = () => {
   return (
     <section className={classes.root}>
       <div className={classes.box}>
-        <img src="/logo192.png" alt="Menu logo" onClick={signOut} />
+        <img src="/logo192.png" alt="Menu logo" />
 
         <TextField
           type="email"

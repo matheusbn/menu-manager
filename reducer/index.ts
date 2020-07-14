@@ -1,12 +1,13 @@
 import { combineReducers } from 'redux'
 import 'firebase/storage'
 import 'firebase/firestore'
-import Restaurant from 'models/Restaurant'
 
 const user = (state = null, action) => {
   switch (action.type) {
     case `SET_USER`:
       return action.user
+    case `SIGNOUT`:
+      return null
     default:
       return state
   }
@@ -26,6 +27,9 @@ const restaurant = (state: Restaurant | null = null, action) => {
           ...action.data,
         },
       }
+
+    case `SIGNOUT`:
+      return null
     default:
       return state
   }
@@ -51,6 +55,9 @@ const menuItems = (state: MenuItem[] = [], action) => {
           },
         }
       })
+
+    case `SIGNOUT`:
+      return []
     default:
       return state
   }
