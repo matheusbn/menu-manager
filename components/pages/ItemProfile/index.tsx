@@ -104,6 +104,13 @@ const ItemProfile = () => {
 
   const createHandler = field => e => setItemData({ [field]: e.target.value })
 
+  const handlePrice = e => {
+    const price = Number(e.target.value)
+    if (isNaN(price)) return
+
+    setItemData({ price })
+  }
+
   useEffect(() => {
     window.scroll(0, 0)
   }, [])
@@ -120,11 +127,13 @@ const ItemProfile = () => {
   }
 
   const handleAddOptionalSubmit = optional => {
-    dispatch(
-      updateMenuItemData(item.ref, {
-        optionals: [...(item.data.optionals || []), optional],
-      })
-    )
+    setItemData({ optionals: [...(itemData.optionals || []), optional] })
+
+    // dispatch(
+    //   updateMenuItemData(item.ref, {
+    //     optionals: [...(item.data.optionals || []), optional],
+    //   })
+    // )
   }
 
   const handleOptionalSubmit = i => optional => {
@@ -162,7 +171,7 @@ const ItemProfile = () => {
     router.push('/cardapio')
   }
 
-  if (!itemData)
+  if (!itemData || !item?.data)
     return (
       <NavLayout className={classes.centered}>
         <CircularProgress size={30} />
@@ -206,7 +215,7 @@ const ItemProfile = () => {
 
             <TextField
               variant="filled"
-              onChange={createHandler('price')}
+              onChange={handlePrice}
               fullWidth
               label="Preço"
               type="number"
