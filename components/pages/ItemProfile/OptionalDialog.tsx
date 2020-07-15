@@ -108,8 +108,18 @@ const OptionalDialog = ({
   )
   const [options, setOptions] = useState<Option[]>(optional.options || [])
 
-  const removeEmptyProperties = obj =>
-    omitBy(obj, value => typeof value == null)
+  const removeEmptyProperties = obj => omitBy(obj, value => value == null)
+
+  const resetState = () => {
+    setName('')
+    setRequired({})
+    setOptions([])
+  }
+
+  const close = () => {
+    if (!isUpdate) resetState()
+    onClose()
+  }
 
   const submit = () => {
     const newOptional = {
@@ -119,6 +129,9 @@ const OptionalDialog = ({
     }
 
     onSubmit(removeEmptyProperties(newOptional))
+
+    if (!isUpdate) resetState()
+
     onClose()
   }
 
@@ -164,7 +177,7 @@ const OptionalDialog = ({
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={close}
       TransitionComponent={Transition}
       className={classes.root}
     >
@@ -238,7 +251,7 @@ const OptionalDialog = ({
         <Button onClick={submit} color="primary">
           {isUpdate ? 'Atualizar' : 'Confirmar'}
         </Button>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={close} color="primary">
           Cancelar
         </Button>
       </DialogActions>
